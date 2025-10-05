@@ -7,9 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const PALOS = ['Oros', 'Copas', 'Espadas', 'Bastos'];
     const VALORES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
     const PUNTOS = { '1':1,'2':1,'3':1,'4':1,'5':1,'6':1,'7':1,'8':1,'9':1,'10':5,'11':5,'12':10 };
-    const ORDEN_PALO_COBOE = { 'Copas': 0, 'Bastos': 1, 'Oros': 2, 'Espadas': 3 };
+    const ORDEN_PALO_COBOE = { 'Espadas': 0, 'Copas': 1, 'Bastos': 2, 'Oros': 3 };
     const JOKER1_IMG = 'imagenes/01-comodin.png';
     const JOKER2_IMG = 'imagenes/02-comodin.png';
+    const DEBUG = true; // Activar/desactivar logs de depuración
 
     let mazo = [], manoJugador = [], manoOponente = [], pozo = [];
     let scoreJugador = 0, scoreOponente = 0;
@@ -35,9 +36,139 @@ document.addEventListener('DOMContentLoaded', () => {
     const startGameButton = document.getElementById('start-game-button');
     const playerNameInput = document.getElementById('player-name-input');
 
+    const mensajesZaldor = [
+        "Creo que estoy por presentar una QUINTA.",
+        "Una vez presenté una Quinta Real... fue un día glorioso.",
+        "Mmm, tengo hambre ahora...",
+        "Te apuesto que si gano este juego, me como una pizza entera.",
+        "¿Sabías que el 12 de Oros es mi carta favorita?",
+        "No te confíes, he ganado más partidas de las que puedes contar.",
+        "La alquimia y las cartas tienen mucho en común: ambas requieren paciencia y estrategia.",
+        "A veces me pregunto si las cartas tienen vida propia.",
+        "Esta jugada me recuerda a una fórmula que intenté crear una vez.",
+        "Espero que no tengas un As bajo la manga... o un Joker.",
+        "La suerte favorece a la mente preparada.",
+        "¿Sientes la presión? Porque yo no.",
+        "Mis cálculos indican que tengo un 87.3% de probabilidades de ganar.",
+        "No te tomes la derrota como algo personal. No todos pueden ser como yo.",
+        "¡Casi lo tengo! O quizás no...",
+        "El elixir de la victoria será mío.",
+        "Observa y aprende, joven retador.",
+        "¿Sabés por qué los pájaros no usan Facebook? Porque ya tienen Twitter.",
+        "¿Qué le dice un jardinero a otro? ¡Disfrutemos mientras podamos!",
+        "No confío en los átomos; ¡ellos lo constituyen todo!",
+        "La electricidad siempre está en la corriente; ¡es el voltaje que se siente!",
+        "¿Qué hace una abeja en el gimnasio? Zum-ba.",
+        "La comida rápida me gusta, pero la comida lenta me enamora.",
+        "¿Cómo maldice un pollito a otro? ¡¡¡Que te pongan en un caldo!!!",
+        "No tengo un problema de alcohol; tengo un problema de no beberlo.",
+        "¿Por qué el libro de matemáticas está estresado? Porque tiene demasiados problemas.",
+        "Me dijeron que el aceite es bueno para el corazón; ¡por eso lo uso en las ensaladas!",
+        "¿Qué hace una vaca en un terremoto? ¡Leche agitada!",
+        "La única vez que tengo razón es cuando pienso que estoy equivocado.",
+        "¿Cómo organizan una fiesta los gatos? ¡Hacen un miau-sical!",
+        "Estuve en una carrera de caracoles, pero todo fue muy lento.",
+        "¿Por qué los fantasmas son malos mentirosos? Porque se pueden ver a través de ellos.",
+        "Si las mujeres gobiernan el mundo, ¿quién gobierna el universo? ¡Los hombres en las películas de ciencia ficción!",
+        "¿Qué le dice un semáforo a otro? ¡No me mires, me estoy cambiando!",
+        "La pereza es la madre de todos los vicios; ¡y como madre, debe ser respetada!",
+        "Una cereza frente al espejo dice: “¿Seré esa yo?”"
+    ];
+
+    function mostrarMensajeZaldor() {
+        const mensaje = mensajesZaldor[Math.floor(Math.random() * mensajesZaldor.length)];
+        const mensajeElement = document.createElement('p');
+        mensajeElement.className = 'zaldor-message';
+        mensajeElement.textContent = `ZALDOR DICE: "${mensaje}"`;
+        messageElement.prepend(mensajeElement);
+    }
+
+    // Referencias al DOM (Modal de Ejemplos)
+    const exampleModalOverlay = document.getElementById('example-modal-overlay');
+    const exampleModal = document.getElementById('example-modal');
+    const exampleModalTitle = document.getElementById('example-modal-title');
+    const exampleModalCards = document.getElementById('example-modal-cards');
+    const closeExampleModalButton = exampleModal.querySelector('.close-button');
+
     // =================================================================================
     // --- 2. INICIALIZACIÓN ---
     // =================================================================================
+
+    const ejemplos = {
+        'example-5-cards': { title: 'Ejemplo de Quinta de 5 Cartas', tipo: 'Normal', cartas: ['4-de-Copas', '5-de-Bastos', '6-de-Oros', '7-de-Espadas', '10-de-Espadas'], descarte: ['3-de-Bastos', '6-de-Espadas', '11-de-Bastos'] },
+        'example-6-cards': { title: 'Quinta inversa de 6 cartas', tipo: 'Normal', cartas: ['9-de-Bastos', '8-de-Oros', '7-de-Espadas', '6-de-Copas', '5-de-Bastos', '12-de-Oros'], descarte: ['5-de-Copas', '10-de-Bastos'] },
+        'example-7-cards': { title: 'Ejemplo de Quinta de 7 Cartas', tipo: 'Normal', cartas: ['5-de-Copas', '6-de-Bastos', '7-de-Oros', '8-de-Espadas', '9-de-Copas', '10-de-Bastos', '12-de-Oros'] },
+        'example-real-quinta': { title: 'Quinta Real', tipo: 'Real', cartas: ['6-de-Copas', '7-de-Bastos', '8-de-Oros', '9-de-Espadas', '10-de-Copas', '11-de-Bastos', '12-de-Oros'] },
+        'example-imperial-quinta': { title: 'Quinta Imperial', tipo: 'Imperial', cartas: ['7-de-Copas', '6-de-Bastos', '5-de-Oros', '4-de-Espadas', '3-de-Copas', '2-de-Bastos', '1-de-Oros'] }
+    };
+
+    function calcularPuntosQuinta(quinta) {
+        if (quinta.tipo === 'Real') return 50;
+        if (quinta.tipo === 'Imperial') return 70;
+
+        const puntosBase = quinta.cartas.reduce((sum, id) => {
+            const carta = mazoCompleto.find(c => c.id === id);
+            return sum + (carta ? carta.puntos : 0);
+        }, 0);
+
+        let bonusLongitud = 0;
+        if (quinta.cartas.length === 5) bonusLongitud = 10;
+        else if (quinta.cartas.length === 6) bonusLongitud = 30;
+        else if (quinta.cartas.length >= 7) bonusLongitud = 40;
+
+        return puntosBase + bonusLongitud;
+    }
+
+    function showExampleModal(exampleKey) {
+        const ejemplo = ejemplos[exampleKey];
+        if (!ejemplo) return;
+
+        exampleModalTitle.textContent = ejemplo.title;
+        exampleModalCards.innerHTML = '';
+
+        ejemplo.cartas.forEach(id => {
+            const carta = mazoCompleto.find(c => c.id === id);
+            if (carta) {
+                const cardView = crearVistaCarta(carta);
+                exampleModalCards.appendChild(cardView);
+            }
+        });
+
+        if (ejemplo.descarte) {
+            const descarteTitle = document.createElement('h4');
+            descarteTitle.textContent = 'Cartas descartadas';
+            descarteTitle.style.width = '100%';
+            descarteTitle.style.textAlign = 'center';
+            descarteTitle.style.marginTop = '20px';
+            exampleModalCards.appendChild(descarteTitle);
+
+            ejemplo.descarte.forEach(id => {
+                const carta = mazoCompleto.find(c => c.id === id);
+                if (carta) {
+                    const cardView = crearVistaCarta(carta);
+                    cardView.style.opacity = '0.6';
+                    exampleModalCards.appendChild(cardView);
+                }
+            });
+        }
+
+        const score = calcularPuntosQuinta(ejemplo);
+        const scoreElement = document.createElement('p');
+        scoreElement.className = 'example-modal-score';
+        scoreElement.textContent = `Puntuación de la jugada: ${score} puntos`;
+        exampleModalCards.appendChild(scoreElement);
+
+        exampleModalOverlay.style.display = 'flex';
+    }
+
+    if(closeExampleModalButton) closeExampleModalButton.addEventListener('click', () => {
+        exampleModalOverlay.style.display = 'none';
+    });
+
+    Object.keys(ejemplos).forEach(id => {
+        const elem = document.getElementById(id);
+        if (elem) elem.addEventListener('click', () => showExampleModal(id));
+    });
 
     function inicializarMazoCompleto() {
         const palosParaNombre = { 'Copas': 'copa', 'Bastos': 'basto', 'Oros': 'oro', 'Espadas': 'espada' };
@@ -71,6 +202,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function mostrarMensajeSistema(texto) {
+        const mensajeElement = document.createElement('p');
+        mensajeElement.className = 'system-message';
+        mensajeElement.innerHTML = texto;
+        messageElement.prepend(mensajeElement);
+    }
+
     function repartir(esPrimeraPartida = false) {
         crearMazo();
         barajarMazo();
@@ -87,28 +225,31 @@ document.addEventListener('DOMContentLoaded', () => {
         if(checkQuintaButton) checkQuintaButton.disabled = false;
         if (esPrimeraPartida) {
             inicializarDragAndDrop();
-            actualizarMensaje("Determinando quién empieza...");
-            setTimeout(() => determinarPrimerJugador(), 2000);
+            mostrarMensajeSistema("<b>Inicio del juego:</b><br>Se determinará quién empieza comparando la carta de Oros más alta de cada jugador. Si no tienen Oros, se usará la de Espadas.");
+            setTimeout(() => determinarPrimerJugador(), 3000);
         } else {
-            actualizarMensaje("Nueva ronda. Tu turno.");
+            mostrarMensajeSistema("<b>Nueva ronda:</b><br>Roba una carta del mazo o del pozo para empezar.");
         }
     }
 
     function determinarPrimerJugador() {
         const cartaJugador = encontrarCartaMasAlta(manoJugador);
         const cartaOponente = encontrarCartaMasAlta(manoOponente);
-        const msgJugador = cartaJugador ? `Tu carta: ${cartaJugador.id}` : "No tienes Oros/Espadas";
-        const msgOponente = cartaOponente ? `Oponente: ${cartaOponente.id}` : "Oponente no tiene\n  Oros/Espadas";
-        actualizarMensaje(`${msgJugador}. ${msgOponente}.`);
+        
+        const msgJugador = cartaJugador ? `Tu carta más alta es el <b>${cartaJugador.id}</b>.` : "No tienes Oros ni Espadas.";
+        const msgOponente = cartaOponente ? `La de Zaldor es el <b>${cartaOponente.id}</b>.` : "Zaldor no tiene Oros ni Espadas.";
+        mostrarMensajeSistema(`${msgJugador}<br>${msgOponente}`);
+
         let jugadorEmpieza = (cartaJugador && (!cartaOponente || parseInt(cartaJugador.valor) >= parseInt(cartaOponente.valor)));
+        
         setTimeout(() => {
             if (jugadorEmpieza) {
                 turnoDelJugador = true;
                 turnoAdicional = true;
-                actualizarMensaje(`¡Empiezas tú, ${playerNameDisplay.textContent}, y tienes un turno\n  adicional!`);
+                mostrarMensajeSistema(`<b>¡Empiezas tú, ${playerNameDisplay.textContent}!</b><br>Tienes derecho a un turno extra.`);
             } else {
                 turnoDelJugador = false;
-                actualizarMensaje("Empieza Zaldor.");
+                mostrarMensajeSistema("<b>Empieza Zaldor.</b>");
                 setTimeout(() => turnoOponente(), 1500);
             }
         }, 3000);
@@ -121,6 +262,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (espadas.length > 0) return espadas[0];
         return null;
     }
+
+    const continueGameButton = document.getElementById('continue-game-button');
+
+    // ... (resto del código)
 
     function terminarRonda(ganador, resultado) {
         const quinta = resultado.cartas;
@@ -143,17 +288,47 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             scoreOponente += puntosRonda;
             scoreJugador -= puntosNegativos;
+            console.log("Quinta de Zaldor:", quinta);
+            // Mostrar la quinta de Zaldor
+            const quintaAreaTitle = quintaAreaElement.previousElementSibling;
+            quintaAreaTitle.textContent = "Quinta presentada por Zaldor";
+            quintaAreaTitle.classList.add("opponent-quinta-title");
+            quintaAreaElement.innerHTML = '';
+            quinta.forEach(carta => {
+                const cardView = crearVistaCarta(carta);
+                quintaAreaElement.appendChild(cardView);
+            });
         }
         scoreJugador = Math.max(0, scoreJugador);
         scoreOponente = Math.max(0, scoreOponente);
         actualizarMarcadores();
-        actualizarMensaje(`¡Ronda para ${ganador}! Sumas ${puntosRonda} pts. El perdedor resta\n  ${puntosNegativos}.`);
+        const mensaje = `¡Ronda para ${ganador}!<br>
+        Puntos de la Quinta: ${puntosRonda > 0 ? puntosRonda : 'N/A'}<br>
+        Puntos restados al perdedor: ${puntosNegativos}<br>
+        <br>
+        Puntuación actual:<br>
+        ${playerNameDisplay.textContent}: ${scoreJugador}<br>
+        Zaldor: ${scoreOponente}`;
+        actualizarMensaje(mensaje);
         if (scoreJugador >= 100 || scoreOponente >= 100) {
             setTimeout(() => terminarJuego(), 2000);
         } else {
-            setTimeout(() => repartir(), 5000);
+            checkQuintaButton.style.display = 'none';
+            continueGameButton.style.display = 'block';
         }
     }
+
+    // ... (resto del código)
+
+    if(continueGameButton) continueGameButton.addEventListener('click', () => {
+        continueGameButton.style.display = 'none';
+        checkQuintaButton.style.display = 'block';
+        const quintaAreaTitle = quintaAreaElement.previousElementSibling;
+        quintaAreaTitle.textContent = "Area de Presentacion";
+        quintaAreaTitle.classList.remove("opponent-quinta-title");
+        repartir();
+    });
+
 
     function terminarJuego() {
         let mensajeFinal = "¡Fin del juego! ";
@@ -174,6 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =================================================================================
 
     function comprobarQuinta(cartas, showMessage = true) {
+        if (DEBUG) console.log("--- Comprobando Quinta --- Carts:", cartas.map(c=>c.id));
         const cartasPresentadas = cartas;
         if (cartasPresentadas.length < 5) {
             if (showMessage) actualizarMensaje("Una Quinta debe tener al menos 5 cartas.");
@@ -192,13 +368,17 @@ document.addEventListener('DOMContentLoaded', () => {
             for (const combo of combinaciones) {
                 if (esEscaleraCoBOE(combo)) {
                     escaleraEncontrada = combo;
+                    if (DEBUG) console.log("Escalera encontrada:", escaleraEncontrada.map(c=>c.id));
                     break;
                 }
             }
             if (escaleraEncontrada) break;
         }
         if (escaleraEncontrada) {
-            return { tipo: 'Normal', cartas: cartasPresentadas };
+            const elixir = cartasPresentadas.find(c => c.isEV && !c.isJoker);
+            const quintaCartas = [...new Set([...escaleraEncontrada, elixir])];
+            if (DEBUG) console.log("Quinta final:", quintaCartas.map(c=>c.id));
+            return { tipo: 'Normal', cartas: quintaCartas };
         } else {
             if (showMessage) actualizarMensaje("La jugada no contiene una escalera CoBOE válida de 4+ cartas.");
             return null;
@@ -206,45 +386,67 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function esEscaleraCoBOE(combinacion) {
+        if (DEBUG) console.log("--- esEscaleraCoBOE ---", combinacion.map(c=>c.id));
         const normales = combinacion.filter(c => !c.isJoker);
         const numComodines = combinacion.length - normales.length;
         if (normales.length === 0) return true;
+
         const comboAsc = [...normales].sort((a, b) => parseInt(a.valor) - parseInt(b.valor));
+        if (esSecuenciaValida(comboAsc, numComodines, true)) return true;
+
         const comboDesc = [...normales].sort((a, b) => parseInt(b.valor) - parseInt(a.valor));
-        return esSecuenciaValida(comboAsc, numComodines) || esSecuenciaValida(comboDesc, numComodines);
+        if (esSecuenciaValida(comboDesc, numComodines, false)) return true;
+
+        return false;
     }
 
-    function esSecuenciaValida(comboOrdenado, numComodines) {
+    function esSecuenciaValida(comboOrdenado, numComodines, esAscendente) {
+        if (DEBUG) console.log(`--- esSecuenciaValida (${esAscendente ? 'asc' : 'desc'}) ---`, comboOrdenado.map(c=>c.id), `comodines: ${numComodines}`);
+        
+        // Check for duplicate values among non-joker cards
         for (let i = 0; i < comboOrdenado.length - 1; i++) {
-            if (comboOrdenado[i].valor === comboOrdenado[i+1].valor) return false;
-        }
-        const esOrdenNormal = checkSuitOrder(comboOrdenado, 'normal');
-        const esOrdenInverso = checkSuitOrder(comboOrdenado, 'inverso');
-        if (!esOrdenNormal && !esOrdenInverso) return false;
-        const valores = comboOrdenado.map(c => parseInt(c.valor));
-        const minValor = Math.min(...valores);
-        const maxValor = Math.max(...valores);
-        const spanRequerido = maxValor - minValor + 1;
-        const cartasDisponibles = comboOrdenado.length + numComodines;
-        if (cartasDisponibles < spanRequerido) return false;
-        return true;
-    }
-
-    function checkSuitOrder(comboOrdenado, direccion) {
-        let maxIndiceVisto = -1;
-        let minIndiceVisto = 4;
-        const esNormal = direccion === 'normal';
-        for (const carta of comboOrdenado) {
-            const indiceActual = ORDEN_PALO_COBOE[carta.palo];
-            if (esNormal) {
-                if (indiceActual < maxIndiceVisto) return false;
-                maxIndiceVisto = indiceActual;
-            } else {
-                if (indiceActual > minIndiceVisto) return false;
-                minIndiceVisto = indiceActual;
+            if (comboOrdenado[i].valor === comboOrdenado[i+1].valor) {
+                if (DEBUG) console.log("Validación fallida: valores duplicados");
+                return false;
             }
         }
-        return true;
+
+        let comodinesNecesarios = 0;
+        for (let i = 0; i < comboOrdenado.length - 1; i++) {
+            const c1 = comboOrdenado[i];
+            const c2 = comboOrdenado[i+1];
+            const v1 = parseInt(c1.valor);
+            const v2 = parseInt(c2.valor);
+            const p1 = ORDEN_PALO_COBOE[c1.palo];
+            const p2 = ORDEN_PALO_COBOE[c2.palo];
+
+            const diffValor = esAscendente ? v2 - v1 : v1 - v2;
+
+            if (diffValor <= 0) { // Values must be strictly increasing/decreasing
+                 if (DEBUG) console.log("Validación fallida: valores no son estrictamente crecientes/decrecientes");
+                 return false;
+            }
+
+            // Check suit order
+            const expected_p2 = esAscendente ? (p1 + diffValor) % 4 : (p1 - diffValor % 4 + 4) % 4;
+            if (expected_p2 !== p2) {
+                if (DEBUG) console.log(`Validación fallida: orden de palo incorrecto. Se esperaba ${expected_p2}, se obtuvo ${p2}`);
+                return false;
+            }
+
+            // Count jokers needed for the gap
+            comodinesNecesarios += diffValor - 1;
+        }
+
+        if (DEBUG) console.log(`Comodines necesarios: ${comodinesNecesarios}, disponibles: ${numComodines}`);
+
+        if (numComodines >= comodinesNecesarios) {
+            if (DEBUG) console.log("Secuencia válida encontrada");
+            return true;
+        } else {
+            if (DEBUG) console.log("Validación fallida: no hay suficientes comodines para los huecos");
+            return false;
+        }
     }
 
     function esQuintaReal(mano) {
@@ -291,6 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cardElement.src = carta.imagen;
         cardElement.className = 'card';
         cardElement.dataset.cardId = carta.id;
+        cardElement.addEventListener('click', () => gestionarClickCartaMano(carta.id));
         return cardElement;
     }
 
@@ -320,7 +523,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const quintaArea = document.getElementById('quinta-area');
         const discardPile = document.getElementById('discard-pile');
         const onDragEnd = (evt) => {
-            console.log("onDragEnd activado", evt);
             if (evt.to === discardPile) {
                 if (!haRobado) { evt.from.appendChild(evt.item); return; }
                 const cardId = evt.item.dataset.cardId;
@@ -363,7 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         manoJugador.push(mazo.pop());
         haRobado = true;
-        actualizarMensaje("Arrastra una carta al pozo para descartar.");
+        actualizarMensaje("Has robado una carta. Ahora, arrastra una carta de tu mano al pozo para descartar.");
         actualizarVistas();
     }
 
@@ -380,7 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         esperandoPagoPozo = true;
-        actualizarMensaje("Haz clic en un Elixir Vital de tu mano para pagar.");
+        actualizarMensaje("Para tomar una carta del pozo, debes pagar con un Elixir Vital (10, 11 o 12) de tu mano. Haz clic en el Elixir que quieres usar.");
     }
 
     function gestionarClickCartaMano(cardId) {
@@ -417,6 +619,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // =================================================================================
 
     function turnoOponente() {
+        if (Math.random() < 0.5) {
+            setTimeout(mostrarMensajeZaldor, 500);
+        }
         if (mazo.length === 0) {
             turnoDelJugador = true;
             actualizarMensaje("El mazo está vacío. Tu turno.");

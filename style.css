@@ -1,7 +1,7 @@
 /* --- ESTRUCTURA GENERAL --- */
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #0f4a1e;
+    background-color: #063852;
     color: white;
     margin: 0;
     padding: 0;
@@ -110,30 +110,101 @@ body {
     transform: scale(1.05);
 }
 
-/* --- PANTALLA DE JUEGO --- */
+/* --- MODAL DE EJEMPLOS --- */
+#example-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#example-modal {
+    background-color: #011a27;
+    padding: 30px;
+    border-radius: 15px;
+    border: 2px solid #00a9b7;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+    text-align: center;
+    max-width: 600px;
+    position: relative;
+}
+
+#example-modal .close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 2.5em;
+    color: #00a9b7;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+#example-modal-title {
+    font-size: 1.5em;
+    color: #00a9b7;
+    margin-bottom: 20px;
+}
+
+#example-modal-cards {
+    justify-content: center;
+    min-height: 150px;
+}
+
+.example-modal-score {
+    width: 100%;
+    text-align: center;
+    font-size: 1.2em;
+    color: #00a9b7;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.zaldor-message {
+    color: cyan;
+    font-style: italic;
+}
+
+.system-message {
+    color: #a7ff89;
+}
+
 #game-container { display: none; width: 100%; height: 100%; justify-content: center; align-items: center; }
-#game-board { display: flex; flex-direction: row; justify-content: space-between; width: 98%; height: 95%; padding: 15px; border: 2px solid #c9a40a; border-radius: 10px; background-color: #1a7a33; background-image: url(img/formula2.png); box-sizing: border-box; }
+#game-board { display: flex; flex-direction: row; justify-content: space-between; width: 98%; height: 95%; padding: 15px; border: 2px solid #c9a40a; border-radius: 10px; background-color: #0e203a; background-image: url(img/formula2.png); box-sizing: border-box; }
 .game-column { height: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 10px; box-sizing: border-box; }
-#player-column { width: 55%; }
+.score-container { display: flex; justify-content: space-around; width: 100%; margin-bottom: 10px; }
+.score-area { width: 45%; text-align: center; }
+#player-column { width: 45%; }
 #table-column { width: 20%; justify-content: space-around; }
-#info-column { width: 25%; }
+#info-column { width: 35%; }
 h2 { margin: 10px 0; }
-.hand { width: 100%; flex-grow: 1; display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; border: 1px dashed #c9a40a; overflow-y: auto; padding: 10px; box-sizing: border-box; }
+.hand { width: 100%; flex-grow: 1; display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; border: 1px dashed #00a9b7; overflow-y: auto; padding: 10px; box-sizing: border-box; }
 #quinta-area { border-color: #87ceeb; }
 #deck, #discard-pile { width: 100%; }
 #discard-pile { min-height: 170px; }
 #discard-pile .card { pointer-events: none; }
-#message-area { width: 100%; height: 200px; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; padding: 10px; box-sizing: border-box; overflow-y: auto; }
+#message-area { width: 100%; height: 250px; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; padding: 10px; box-sizing: border-box; overflow-y: auto; }
 #game-controls { margin-top: 20px; width: 100%; }
-#check-quinta-button { width: 100%; padding: 15px; margin-bottom: 10px; font-size: 1.1em; cursor: pointer; border: none; border-radius: 5px; background-color: #c9a40a; color: #333; }
+.table-controls { margin-top: 20px; width: 100%; text-align: center; }
+#check-quinta-button, #continue-game-button { width: 100%; padding: 15px; margin-bottom: 10px; font-size: 1.1em; cursor: pointer; border: none; border-radius: 5px; background-color: #00a9b7; color: #011a27; font-weight: bold; }
+#continue-game-button { display: none; }
+.opponent-quinta-title { color: #ff4d4d; text-align: center; }
 button:disabled { background-color: #888; cursor: not-allowed; }
-#player-score-area, #opponent-score-area { font-size: 1.4em; font-weight: bold; margin-bottom: 10px; padding: 10px; background-color: rgba(0,0,0,0.3); border-radius: 5px; text-align: center; color: #c9a40a; }
+#player-score-area, #opponent-score-area { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; padding: 10px; background-color: rgba(0,0,0,0.637); border-radius: 5px; text-align: center; color: #c9a40a; }
 #opponent-score-area { margin-bottom: 20px; }
 .title-wrapper { display: flex; justify-content: center; align-items: center; gap: 10px; }
 #rules-link { display: inline-block; color: #c9a40a; border: 1px solid #c9a40a; border-radius: 50%; width: 20px; height: 20px; line-height: 20px; text-align: center; text-decoration: none; font-weight: bold; }
 #rules-link:hover { background-color: #c9a40a; color: #112c19; }
-.card { height: 120px; width: auto; margin: 5px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); cursor: pointer; }
-#scoring-rules { margin-top: auto; padding: 10px; background-color: rgba(0,0,0,0.2); border-radius: 5px; border-top: 1px solid #c9a40a; }
+.card { height: 96px; width: auto; margin: 5px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.637); cursor: pointer; }
+#scoring-rules { margin-top: auto; padding: 10px; background-color: rgba(0,0,0,0.637); border-radius: 5px; border-top: 1px solid #c9a40a; width: 100%; box-sizing: border-box; }
 #scoring-rules h4 { margin: 0 0 10px 0; text-align: center; }
 #scoring-rules ul { list-style: none; padding: 0; margin: 0 0 10px 0; }
 #scoring-rules li { margin-bottom: 5px; }
