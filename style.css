@@ -209,3 +209,61 @@ button:disabled { background-color: #888; cursor: not-allowed; }
 #scoring-rules ul { list-style: none; padding: 0; margin: 0 0 10px 0; }
 #scoring-rules li { margin-bottom: 5px; }
 #scoring-rules p { font-size: 0.8em; text-align: center; margin: 0; }
+
+@media (max-width: 768px) {
+    /* --- PANTALLA DE INICIO RESPONSIVE --- */
+    #splash-screen {
+        flex-direction: column;
+        height: auto;
+        padding: 20px 0;
+    }
+
+    #splash-left, #splash-right {
+        width: 90%;
+        padding: 20px;
+        text-align: center;
+    }
+
+    #splash-right {
+        margin-top: 20px;
+    }
+
+    /* --- ESTRUCTURA GENERAL RESPONSIVE --- */
+    #game-board {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh; /* Ocupar al menos toda la altura de la pantalla */
+        padding: 10px;
+    }
+
+    .game-column {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    #player-column { order: 3; }
+    #table-column { order: 2; }
+    #info-column { order: 1; }
+
+    /* --- AJUSTES DE TAMAÑO PARA MÓVIL --- */
+    .hand {
+        min-height: 120px; /* Menos altura para las manos */
+    }
+
+    #message-area {
+        height: 150px; /* Menos altura para el área de mensajes */
+    }
+
+    .card {
+        height: 80px; /* Cartas más pequeñas */
+    }
+
+    #player-score-area, #opponent-score-area {
+        font-size: 1em; /* Letra de puntaje más pequeña */
+        padding: 5px;
+    }
+
+    h2 {
+        font-size: 1.2em;
+    }
+}
