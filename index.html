@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Quinta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- PANTALLA DE INICIO -->
+    <div id="splash-screen">
+        <div id="splash-left">
+            <div class="splash-content-wrapper">
+                <img src="img/logo.png" alt="Logo La Quinta" id="splash-logo">
+                <h1>LA QUINTA</h1>
+                <p class="subtitle">el juego de las formulas secretas</p>
+                <input type="text" id="player-name-input" placeholder="Escribe tu nombre..." maxlength="20">
+                <button id="start-game-button">Empezar a Jugar</button>
+            </div>
+        </div>
+        <div id="splash-right">
+            <div class="instructions">
+                <h3>¡Bienvenido, retador!</h3>
+                <p>Demuestra tu astucia y estrategia contra el maestro del mazo, <strong>Zaldor "El Alquimista"</strong>. Sé el primero en alcanzar los 100 puntos y arrebátale el título.</p>
+                <h4>¿Cómo ganar una ronda?</h4>
+                <p>Presentando una "Quinta": una jugada de 5+ cartas que cumpla dos condiciones:</p>
+                <ol>
+                    <li>Debe contener un <strong>Elixir Vital</strong> (10, 11 o 12 real, no comodín).</li>
+                    <li>Debe contener una <strong>Escalera CoBOE</strong> de 4+ cartas (con números consecutivos y respetando el orden de palos: Copas -> Bastos -> Oros -> Espadas).</li>
+                </ol>
+                <a href="img/reglas.pdf" target="_blank" class="rules-link-splash">Ver Reglamento Completo</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE JUEGO (Oculta al inicio) -->
+    <main id="game-container">
+        <div id="game-board">
+
+            <!-- COLUMNA IZQUIERDA: ZONA DEL JUGADOR -->
+            <div id="player-column" class="game-column">
+                <div id="player-score-area" class="score-area">
+                    <span id="player-name-display">Jugador</span>: <span id="player-score">0</span>
+                </div>
+                <h2>Tu Juego</h2>
+                <div id="player-hand" class="hand"></div>
+                <h2 style="margin-top: 20px;">Area de Presentacion</h2>
+                <div id="quinta-area" class="hand"></div>
+            </div>
+
+            <!-- COLUMNA CENTRAL: ZONA DE JUEGO -->
+            <div id="table-column" class="game-column">
+                <div id="deck-area">
+                    <h2>Mazo</h2>
+                    <div id="deck"></div>
+                </div>
+                <div id="discard-pile-area">
+                    <h2>Pozo</h2>
+                    <div id="discard-pile" class="hand"></div>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: INFORMACIÓN Y ACCIONES -->
+            <div id="info-column" class="game-column">
+                <div id="opponent-score-area" class="score-area">
+                    <span>Zaldor</span>: <span id="opponent-score">0</span>
+                </div>
+                <div class="title-wrapper">
+                    <h2>Guía</h2>
+                    <a href="img/reglas.pdf" target="_blank" id="rules-link">(?)</a>
+                </div>
+                <div id="message-area"></div>
+                <div id="game-controls">
+                    <button id="check-quinta-button" disabled>Cantar Quinta</button>
+                </div>
+                <div id="scoring-rules">
+                    <h4>Puntuación de Quintas</h4>
+                    <ul>
+                        <li><strong>5 cartas:</strong> +10 Pts</li>
+                        <li><strong>6 cartas:</strong> +30 Pts</li>
+                        <li><strong>7+ cartas:</strong> +40 Pts</li>
+                        <li><strong>Quinta Real:</strong> +50 Pts</li>
+                        <li><strong>Quinta Imperial:</strong> +70 Pts</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visor del Mazo Completo</title>
+    <style>
+        body {
+            background-color: #333;
+            font-family: sans-serif;
+            color: white;
+        }
+        #mazo-completo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 20px;
+        }
+        #mazo-completo img {
+            height: 150px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        h1 {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Visor de Cartas</h1>
+    <p style="text-align: center;">Si una carta no se ve, significa que el nombre del archivo no coincide con el esperado. Pasa el ratón sobre el icono de imagen rota para ver el nombre que el sistema está buscando.</p>
+    <hr>
+
+    <div id="mazo-completo">
+        <!-- Las imágenes de las cartas se generarán aquí -->
+    </div>
+
+    <script src="mazo.js"></script>
+</body>
+</html>

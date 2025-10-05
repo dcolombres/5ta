@@ -1,0 +1,468 @@
+document.addEventListener('DOMContentLoaded', () => {
+
+    // =================================================================================
+    // --- 1. DECLARACIONES DE VARIABLES Y CONSTANTES ---
+    // =================================================================================
+
+    const PALOS = ['Oros', 'Copas', 'Espadas', 'Bastos'];
+    const VALORES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+    const PUNTOS = { '1':1,'2':1,'3':1,'4':1,'5':1,'6':1,'7':1,'8':1,'9':1,'10':5,'11':5,'12':10 };
+    const ORDEN_PALO_COBOE = { 'Copas': 0, 'Bastos': 1, 'Oros': 2, 'Espadas': 3 };
+    const JOKER1_IMG = 'imagenes/01-comodin.png';
+    const JOKER2_IMG = 'imagenes/02-comodin.png';
+
+    let mazo = [], manoJugador = [], manoOponente = [], pozo = [];
+    let scoreJugador = 0, scoreOponente = 0;
+    let turnoDelJugador = true, haRobado = false, esperandoPagoPozo = false, modoRobar = false,
+    turnoAdicional = false;
+    let mazoCompleto = [];
+
+    // Referencias al DOM (Juego)
+    const gameContainerElement = document.getElementById('game-container');
+    const mazoElement = document.getElementById('deck');
+    const pozoElement = document.getElementById('discard-pile');
+    const pozoClickElement = document.getElementById('discard-pile-area');
+    const manoJugadorElement = document.getElementById('player-hand');
+    const checkQuintaButton = document.getElementById('check-quinta-button');
+    const messageElement = document.getElementById('message-area');
+    const playerScoreElement = document.getElementById('player-score');
+    const opponentScoreElement = document.getElementById('opponent-score');
+    const quintaAreaElement = document.getElementById('quinta-area');
+    const playerNameDisplay = document.getElementById('player-name-display');
+
+    // Referencias al DOM (Pantalla de Inicio)
+    const splashScreen = document.getElementById('splash-screen');
+    const startGameButton = document.getElementById('start-game-button');
+    const playerNameInput = document.getElementById('player-name-input');
+
+    // =================================================================================
+    // --- 2. INICIALIZACIÓN ---
+    // =================================================================================
+
+    function inicializarMazoCompleto() {
+        const palosParaNombre = { 'Copas': 'copa', 'Bastos': 'basto', 'Oros': 'oro', 'Espadas': 'espada' };
+        for (const palo of PALOS) {
+            for (const valor of VALORES) {
+                const isEV = ['10', '11', '12'].includes(valor);
+                const pts = PUNTOS[valor] || 1;
+                const nombreValor = valor.toString().padStart(2, '0');
+                const nombreImagen = `${nombreValor}-${palosParaNombre[palo]}.png`;
+                mazoCompleto.push({ palo, valor, puntos: pts, id: `${valor}-de-${palo}`, isEV, isJoker: false, imagen: `imagenes/${nombreImagen}` });
+            }
+        }
+        mazoCompleto.push({ palo: 'Joker', valor: 'Joker', puntos: 10, id: 'Joker-1', isEV: false, isJoker: true, imagen: JOKER1_IMG });
+        mazoCompleto.push({ palo: 'Joker', valor: 'Joker', puntos: 10, id: 'Joker-2', isEV: false, isJoker: true, imagen: JOKER2_IMG });
+    }
+
+    function crearMazo() {
+        mazo = [...mazoCompleto];
+    }
+
+    inicializarMazoCompleto();
+
+    // =================================================================================
+    // --- 3. LÓGICA DEL JUEGO ---
+    // =================================================================================
+
+    function barajarMazo() {
+        for (let i = mazo.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [mazo[i], mazo[j]] = [mazo[j], mazo[i]];
+        }
+    }
+
+    function repartir(esPrimeraPartida = false) {
+        crearMazo();
+        barajarMazo();
+        manoJugador = mazo.splice(0, 7);
+        manoOponente = mazo.splice(0, 7);
+        pozo = [mazo.pop()];
+        turnoDelJugador = true;
+        haRobado = false;
+        esperandoPagoPozo = false;
+        modoRobar = false;
+        turnoAdicional = false;
+        actualizarVistas();
+        actualizarMarcadores();
+        if(checkQuintaButton) checkQuintaButton.disabled = false;
+        if (esPrimeraPartida) {
+            inicializarDragAndDrop();
+            actualizarMensaje("Determinando quién empieza...");
+            setTimeout(() => determinarPrimerJugador(), 2000);
+        } else {
+            actualizarMensaje("Nueva ronda. Tu turno.");
+        }
+    }
+
+    function determinarPrimerJugador() {
+        const cartaJugador = encontrarCartaMasAlta(manoJugador);
+        const cartaOponente = encontrarCartaMasAlta(manoOponente);
+        const msgJugador = cartaJugador ? `Tu carta: ${cartaJugador.id}` : "No tienes Oros/Espadas";
+        const msgOponente = cartaOponente ? `Oponente: ${cartaOponente.id}` : "Oponente no tiene\n  Oros/Espadas";
+        actualizarMensaje(`${msgJugador}. ${msgOponente}.`);
+        let jugadorEmpieza = (cartaJugador && (!cartaOponente || parseInt(cartaJugador.valor) >= parseInt(cartaOponente.valor)));
+        setTimeout(() => {
+            if (jugadorEmpieza) {
+                turnoDelJugador = true;
+                turnoAdicional = true;
+                actualizarMensaje(`¡Empiezas tú, ${playerNameDisplay.textContent}, y tienes un turno\n  adicional!`);
+            } else {
+                turnoDelJugador = false;
+                actualizarMensaje("Empieza Zaldor.");
+                setTimeout(() => turnoOponente(), 1500);
+            }
+        }, 3000);
+    }
+
+    function encontrarCartaMasAlta(mano) {
+        const oros = mano.filter(c => c.palo === 'Oros').sort((a, b) => parseInt(b.valor) - parseInt(a.valor));
+        if (oros.length > 0) return oros[0];
+        const espadas = mano.filter(c => c.palo === 'Espadas').sort((a, b) => parseInt(b.valor) - parseInt(a.valor));
+        if (espadas.length > 0) return espadas[0];
+        return null;
+    }
+
+    function terminarRonda(ganador, resultado) {
+        const quinta = resultado.cartas;
+        let puntosRonda = 0;
+        if (resultado.tipo === 'Real') { puntosRonda = 50; }
+        else if (resultado.tipo === 'Imperial') { puntosRonda = 70; }
+        else {
+            const puntosBase = quinta.reduce((sum, card) => sum + card.puntos, 0);
+            let bonusLongitud = 0;
+            if (quinta.length === 5) bonusLongitud = 10;
+            else if (quinta.length === 6) bonusLongitud = 30;
+            else if (quinta.length >= 7) bonusLongitud = 40;
+            puntosRonda = puntosBase + bonusLongitud;
+        }
+        const manoPerdedor = (ganador === 'jugador') ? manoOponente : manoJugador;
+        const puntosNegativos = manoPerdedor.reduce((sum, card) => sum + card.puntos, 0);
+        if (ganador === 'jugador') {
+            scoreJugador += puntosRonda;
+            scoreOponente -= puntosNegativos;
+        } else {
+            scoreOponente += puntosRonda;
+            scoreJugador -= puntosNegativos;
+        }
+        scoreJugador = Math.max(0, scoreJugador);
+        scoreOponente = Math.max(0, scoreOponente);
+        actualizarMarcadores();
+        actualizarMensaje(`¡Ronda para ${ganador}! Sumas ${puntosRonda} pts. El perdedor resta\n  ${puntosNegativos}.`);
+        if (scoreJugador >= 100 || scoreOponente >= 100) {
+            setTimeout(() => terminarJuego(), 2000);
+        } else {
+            setTimeout(() => repartir(), 5000);
+        }
+    }
+
+    function terminarJuego() {
+        let mensajeFinal = "¡Fin del juego! ";
+        const winnerName = playerNameDisplay.textContent;
+        if (scoreJugador >= 100 && scoreJugador > scoreOponente) {
+            mensajeFinal += `¡Has ganado, ${winnerName}!`;
+        } else if (scoreOponente >= 100) {
+            mensajeFinal += "Zaldor ha ganado.";
+        } else {
+            mensajeFinal += "Es un empate.";
+        }
+        actualizarMensaje(mensajeFinal);
+        if(checkQuintaButton) checkQuintaButton.disabled = true;
+    }
+
+    // =================================================================================
+    // --- 4. VALIDACIÓN DE QUINTAS ---
+    // =================================================================================
+
+    function comprobarQuinta(cartas, showMessage = true) {
+        const cartasPresentadas = cartas;
+        if (cartasPresentadas.length < 5) {
+            if (showMessage) actualizarMensaje("Una Quinta debe tener al menos 5 cartas.");
+            return null;
+        }
+        if (esQuintaReal(cartasPresentadas)) return { tipo: 'Real', cartas: cartasPresentadas };
+        if (esQuintaImperial(cartasPresentadas)) return { tipo: 'Imperial', cartas: cartasPresentadas };
+        const tieneElixirReal = cartasPresentadas.some(c => c.isEV && !c.isJoker);
+        if (!tieneElixirReal) {
+            if (showMessage) actualizarMensaje("La jugada debe incluir un Elixir Vital (10, 11 o 12) que no sea comodín.");
+            return null;
+        }
+        let escaleraEncontrada = null;
+        for (let size = cartasPresentadas.length; size >= 4; size--) {
+            const combinaciones = getCombinations(cartasPresentadas, size);
+            for (const combo of combinaciones) {
+                if (esEscaleraCoBOE(combo)) {
+                    escaleraEncontrada = combo;
+                    break;
+                }
+            }
+            if (escaleraEncontrada) break;
+        }
+        if (escaleraEncontrada) {
+            return { tipo: 'Normal', cartas: cartasPresentadas };
+        } else {
+            if (showMessage) actualizarMensaje("La jugada no contiene una escalera CoBOE válida de 4+ cartas.");
+            return null;
+        }
+    }
+
+    function esEscaleraCoBOE(combinacion) {
+        const normales = combinacion.filter(c => !c.isJoker);
+        const numComodines = combinacion.length - normales.length;
+        if (normales.length === 0) return true;
+        const comboAsc = [...normales].sort((a, b) => parseInt(a.valor) - parseInt(b.valor));
+        const comboDesc = [...normales].sort((a, b) => parseInt(b.valor) - parseInt(a.valor));
+        return esSecuenciaValida(comboAsc, numComodines) || esSecuenciaValida(comboDesc, numComodines);
+    }
+
+    function esSecuenciaValida(comboOrdenado, numComodines) {
+        for (let i = 0; i < comboOrdenado.length - 1; i++) {
+            if (comboOrdenado[i].valor === comboOrdenado[i+1].valor) return false;
+        }
+        const esOrdenNormal = checkSuitOrder(comboOrdenado, 'normal');
+        const esOrdenInverso = checkSuitOrder(comboOrdenado, 'inverso');
+        if (!esOrdenNormal && !esOrdenInverso) return false;
+        const valores = comboOrdenado.map(c => parseInt(c.valor));
+        const minValor = Math.min(...valores);
+        const maxValor = Math.max(...valores);
+        const spanRequerido = maxValor - minValor + 1;
+        const cartasDisponibles = comboOrdenado.length + numComodines;
+        if (cartasDisponibles < spanRequerido) return false;
+        return true;
+    }
+
+    function checkSuitOrder(comboOrdenado, direccion) {
+        let maxIndiceVisto = -1;
+        let minIndiceVisto = 4;
+        const esNormal = direccion === 'normal';
+        for (const carta of comboOrdenado) {
+            const indiceActual = ORDEN_PALO_COBOE[carta.palo];
+            if (esNormal) {
+                if (indiceActual < maxIndiceVisto) return false;
+                maxIndiceVisto = indiceActual;
+            } else {
+                if (indiceActual > minIndiceVisto) return false;
+                minIndiceVisto = indiceActual;
+            }
+        }
+        return true;
+    }
+
+    function esQuintaReal(mano) {
+        if (mano.length !== 7) return false;
+        const required = ['6-de-Copas', '7-de-Bastos', '8-de-Oros', '9-de-Espadas', '10-de-Copas', '11-de-Bastos', '12-de-Oros'];
+        const handIds = new Set(mano.map(c => c.id));
+        return required.every(id => handIds.has(id));
+    }
+
+    function esQuintaImperial(mano) {
+        if (mano.length !== 7) return false;
+        const required = ['7-de-Copas', '6-de-Bastos', '5-de-Oros', '4-de-Espadas', '3-de-Copas', '2-de-Bastos', '1-de-Oros'];
+        const handIds = new Set(mano.map(c => c.id));
+        return required.every(id => handIds.has(id));
+    }
+
+    function getCombinations(array, size) {
+        const result = [];
+        function combine(startIndex, currentCombo) {
+            if (currentCombo.length === size) { result.push([...currentCombo]); return; }
+            for (let i = startIndex; i < array.length; i++) {
+                currentCombo.push(array[i]);
+                combine(i + 1, currentCombo);
+                currentCombo.pop();
+            }
+        }
+        combine(0, []);
+        return result;
+    }
+
+    // =================================================================================
+    // --- 5. ACTUALIZACIÓN DE LA INTERFAZ ---
+    // =================================================================================
+
+    function actualizarMensaje(texto) { if(messageElement) messageElement.innerHTML = `<p>${texto}</p>`; }
+
+    function actualizarMarcadores() {
+        if(playerScoreElement) playerScoreElement.textContent = scoreJugador;
+        if(opponentScoreElement) opponentScoreElement.textContent = scoreOponente;
+    }
+
+    function crearVistaCarta(carta) {
+        const cardElement = document.createElement('img');
+        cardElement.src = carta.imagen;
+        cardElement.className = 'card';
+        cardElement.dataset.cardId = carta.id;
+        return cardElement;
+    }
+
+    function actualizarVistas() {
+        if(manoJugadorElement) manoJugadorElement.innerHTML = '';
+        if(quintaAreaElement) quintaAreaElement.innerHTML = '';
+        if(pozoElement) pozoElement.innerHTML = '';
+        const dorsoSrc = 'imagenes/dorso.png';
+        if(mazoElement) mazoElement.innerHTML = `<img src="${dorsoSrc}" class="card">`;
+        manoJugador.forEach(carta => {
+            const cardView = crearVistaCarta(carta);
+            manoJugadorElement.appendChild(cardView);
+        });
+        if (pozo.length > 0) {
+            const topCard = pozo[pozo.length - 1];
+            const cardView = crearVistaCarta(topCard);
+            pozoElement.appendChild(cardView);
+        }
+    }
+
+    // =================================================================================
+    // --- 6. MANEJO DE ACCIONES DEL JUGADOR ---
+    // =================================================================================
+
+    function inicializarDragAndDrop() {
+        const handElement = document.getElementById('player-hand');
+        const quintaArea = document.getElementById('quinta-area');
+        const discardPile = document.getElementById('discard-pile');
+        const onDragEnd = (evt) => {
+            console.log("onDragEnd activado", evt);
+            if (evt.to === discardPile) {
+                if (!haRobado) { evt.from.appendChild(evt.item); return; }
+                const cardId = evt.item.dataset.cardId;
+                const cardIndex = manoJugador.findIndex(c => c.id === cardId);
+                if (cardIndex !== -1) {
+                    const [cartaMovida] = manoJugador.splice(cardIndex, 1);
+                    pozo.push(cartaMovida);
+                    if (turnoAdicional) {
+                        turnoAdicional = false; haRobado = false; turnoDelJugador = true;
+                        actualizarVistas();
+                        actualizarMensaje("Fin del turno adicional. Roba otra vez.");
+                        return;
+                    }
+                    haRobado = false; turnoDelJugador = false;
+                    actualizarMensaje("Turno de Zaldor...");
+                    setTimeout(turnoOponente, 1000);
+                }
+                return;
+            }
+            const newHandOrderIds = [];
+            handElement.querySelectorAll('.card').forEach(cardNode => newHandOrderIds.push(cardNode.dataset.cardId));
+            quintaArea.querySelectorAll('.card').forEach(cardNode => newHandOrderIds.push(cardNode.dataset.cardId));
+            manoJugador.sort((a, b) => newHandOrderIds.indexOf(a.id) - newHandOrderIds.indexOf(b.id));
+        };
+        [handElement, quintaArea, discardPile].forEach(el => {
+            if (el) new Sortable(el, { group: 'shared', animation: 150, onEnd: onDragEnd });
+        });
+    }
+
+    function robarDelMazo() {
+        if (!turnoDelJugador || haRobado || esperandoPagoPozo || modoRobar) return;
+        if (mazo.length === 0) {
+            actualizarMensaje("El mazo se acabó. ¡Barajando el pozo!");
+            if (pozo.length <= 1) { return; }
+            const cartaSuperiorDelPozo = pozo.pop();
+            mazo = [...pozo];
+            pozo = [cartaSuperiorDelPozo];
+            barajarMazo();
+            actualizarVistas();
+        }
+        manoJugador.push(mazo.pop());
+        haRobado = true;
+        actualizarMensaje("Arrastra una carta al pozo para descartar.");
+        actualizarVistas();
+    }
+
+    function robarDelPozo() {
+        if (!turnoDelJugador || haRobado || esperandoPagoPozo || modoRobar) return;
+        if (esperandoPagoPozo) {
+            esperandoPagoPozo = false;
+            actualizarMensaje("Acción cancelada. Elige tu jugada.");
+            return;
+        }
+        if (pozo.length === 0) return;
+        if (!manoJugador.some(c => c.isEV)) {
+            actualizarMensaje("No tienes un Elixir Vital (10, 11 o 12) para pagar.");
+            return;
+        }
+        esperandoPagoPozo = true;
+        actualizarMensaje("Haz clic en un Elixir Vital de tu mano para pagar.");
+    }
+
+    function gestionarClickCartaMano(cardId) {
+        if (!turnoDelJugador) return;
+        const cartaClicada = manoJugador.find(c => c.id === cardId);
+        if (!haRobado && !esperandoPagoPozo && cartaClicada && cartaClicada.id === '12-de-Oros') {
+            modoRobar = true;
+            actualizarMensaje("Modo Ladrón: funcionaliad no implementada.");
+            return;
+        }
+        if (esperandoPagoPozo) {
+            const cartaPagadora = manoJugador.find(c => c.id === cardId);
+            if (cartaPagadora && (cartaPagadora.isEV || ['10', '11', '12'].includes(cartaPagadora.valor))) {
+                const cartaDelPozo = pozo.pop();
+                manoJugador.push(cartaDelPozo);
+                const indexPagadora = manoJugador.findIndex(c => c.id === cardId);
+                const [cartaMovida] = manoJugador.splice(indexPagadora, 1);
+                pozo.push(cartaMovida);
+                esperandoPagoPozo = false;
+                haRobado = false;
+                turnoDelJugador = false;
+                actualizarVistas();
+                actualizarMensaje("Has intercambiado una carta. Turno de Zaldor...");
+                setTimeout(turnoOponente, 1000);
+            } else {
+                actualizarMensaje("Pago rechazado. Debes usar un Elixir Vital (10, 11 o 12).");
+            }
+            return;
+        }
+    }
+
+    // =================================================================================
+    // --- 7. LÓGICA DEL OPONENTE ---
+    // =================================================================================
+
+    function turnoOponente() {
+        if (mazo.length === 0) {
+            turnoDelJugador = true;
+            actualizarMensaje("El mazo está vacío. Tu turno.");
+            return;
+        }
+        manoOponente.push(mazo.pop());
+        const resultadoOponente = comprobarQuinta(manoOponente, false);
+        if (resultadoOponente) {
+            actualizarVistas();
+            terminarRonda('oponente', resultadoOponente);
+            return;
+        }
+        const cartaADescartar = manoOponente.splice(Math.floor(Math.random() * manoOponente.length), 1)[0];
+        pozo.push(cartaADescartar);
+        turnoDelJugador = true;
+        actualizarVistas();
+        actualizarMensaje("Tu turno. Roba una carta del mazo o del pozo.");
+    }
+
+    // =================================================================================
+    // --- 8. INICIALIZACIÓN DE EVENTOS ---
+    // =================================================================================
+
+    if(startGameButton) startGameButton.addEventListener('click', () => {
+        const playerName = playerNameInput.value.trim();
+        if (playerName && playerNameDisplay) {
+            playerNameDisplay.textContent = playerName;
+        }
+        if(splashScreen) splashScreen.style.display = 'none';
+        if(gameContainerElement) gameContainerElement.style.display = 'flex';
+        repartir(true);
+    });
+
+    if(mazoElement) mazoElement.addEventListener('click', robarDelMazo);
+    if(pozoClickElement) pozoClickElement.addEventListener('click', robarDelPozo);
+    if(checkQuintaButton) checkQuintaButton.addEventListener('click', () => {
+        if (!turnoDelJugador) { return actualizarMensaje("No es tu turno."); }
+        const cartasPresentadas = [];
+        if(quintaAreaElement) quintaAreaElement.querySelectorAll('.card').forEach(cardNode => {
+            const cardId = cardNode.dataset.cardId;
+            const cartaReal = manoJugador.find(c => c.id === cardId);
+            if (cartaReal) cartasPresentadas.push(cartaReal);
+        });
+        const resultado = comprobarQuinta(cartasPresentadas);
+        if (resultado) {
+            terminarRonda('jugador', resultado);
+        }
+    });
+});
