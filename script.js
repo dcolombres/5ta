@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const PALOS = ['Oros', 'Copas', 'Espadas', 'Bastos'];
     const VALORES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
     const PUNTOS = { '1':1,'2':1,'3':1,'4':1,'5':1,'6':1,'7':1,'8':1,'9':1,'10':5,'11':5,'12':10 };
-    const ORDEN_PALO_COBOE = { 'Espadas': 0, 'Copas': 1, 'Bastos': 2, 'Oros': 3 };
+    const ORDEN_PALO_COBOE = { 'Copas': 0, 'Bastos': 1, 'Oros': 2, 'Espadas': 3 };
     const JOKER1_IMG = 'imagenes/01-comodin.png';
     const JOKER2_IMG = 'imagenes/02-comodin.png';
     const DEBUG = true; // Activar/desactivar logs de depuración
@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let turnoDelJugador = true, haRobado = false, esperandoPagoPozo = false, modoRobar = false,
     turnoAdicional = false;
     let mazoCompleto = [];
+    let isSequenceSortAscending = true;
 
     // Referencias al DOM (Juego)
     const gameContainerElement = document.getElementById('game-container');
@@ -30,6 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const opponentScoreElement = document.getElementById('opponent-score');
     const quintaAreaElement = document.getElementById('quinta-area');
     const playerNameDisplay = document.getElementById('player-name-display');
+
+    // Referencias al DOM (Botones de Ordenar)
+    const sortByNumberBtn = document.getElementById('sort-by-number-btn');
+    const sortBySuitBtn = document.getElementById('sort-by-suit-btn');
 
     // Referencias al DOM (Pantalla de Inicio)
     const splashScreen = document.getElementById('splash-screen');
@@ -233,6 +238,13 @@ document.addEventListener('DOMContentLoaded', () => {
         messageElement.prepend(mensajeElement);
     }
 
+    function mostrarMensajeOponente(texto) {
+        const mensajeElement = document.createElement('p');
+        mensajeElement.className = 'opponent-action-message';
+        mensajeElement.innerHTML = texto;
+        messageElement.prepend(mensajeElement);
+    }
+
     function repartir(esPrimeraPartida = false) {
         crearMazo();
         barajarMazo();
@@ -247,11 +259,18 @@ document.addEventListener('DOMContentLoaded', () => {
         actualizarVistas();
         actualizarMarcadores();
         if(checkQuintaButton) checkQuintaButton.disabled = false;
+
         if (esPrimeraPartida) {
             inicializarDragAndDrop();
             mostrarMensajeSistema("<b>Inicio del juego:</b><br>Se determinará quién empieza comparando la carta de Oros más alta de cada jugador. Si no tienen Oros, se usará la de Espadas.");
+            
+            setTimeout(() => {
+                mostrarMensajeSistema("<b>¡Recuerda la fórmula secreta!</b><br>La secuencia de palos es: <b>Copas -> Bastos -> Oros -> Espadas</b>.");
+            }, 1500); // Show it a little after the initial message
+
             setTimeout(() => determinarPrimerJugador(), 3000);
         } else {
+            if(messageElement) messageElement.innerHTML = ''; // Clear messages for new round
             mostrarMensajeSistema("<b>Nueva ronda:</b><br>Roba una carta del mazo o del pozo para empezar.");
         }
     }
@@ -294,18 +313,28 @@ document.addEventListener('DOMContentLoaded', () => {
     function terminarRonda(ganador, resultado) {
         const quinta = resultado.cartas;
         let puntosRonda = 0;
-        if (resultado.tipo === 'Real') { puntosRonda = 50; }
-        else if (resultado.tipo === 'Imperial') { puntosRonda = 70; }
-        else {
-            const puntosBase = quinta.reduce((sum, card) => sum + card.puntos, 0);
-            let bonusLongitud = 0;
+        let puntosBase = 0;
+        let bonusLongitud = 0;
+        let mensajeDetallado = '';
+
+        if (resultado.tipo === 'Real') {
+            puntosRonda = 50;
+            mensajeDetallado = '¡Quinta Real! Sumas &lt;b&gt;50 puntos&lt;/b&gt;.';
+        } else if (resultado.tipo === 'Imperial') {
+            puntosRonda = 70;
+            mensajeDetallado = '¡Quinta Imperial! Sumas &lt;b&gt;70 puntos&lt;/b&gt;.';
+        } else {
+            puntosBase = quinta.reduce((sum, card) => sum + card.puntos, 0);
             if (quinta.length === 5) bonusLongitud = 10;
             else if (quinta.length === 6) bonusLongitud = 30;
             else if (quinta.length >= 7) bonusLongitud = 40;
             puntosRonda = puntosBase + bonusLongitud;
+            mensajeDetallado = `Quinta de ${quinta.length} cartas: &lt;b&gt;${bonusLongitud} pts&lt;/b&gt; (bonus) + &lt;b&gt;${puntosBase} pts&lt;/b&gt; (cartas) = &lt;b&gt;${puntosRonda} pts&lt;/b&gt;.`;
         }
+
         const manoPerdedor = (ganador === 'jugador') ? manoOponente : manoJugador;
         const puntosNegativos = manoPerdedor.reduce((sum, card) => sum + card.puntos, 0);
+        
         if (ganador === 'jugador') {
             scoreJugador += puntosRonda;
             scoreOponente -= puntosNegativos;
@@ -323,17 +352,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 quintaAreaElement.appendChild(cardView);
             });
         }
-        // scoreJugador = Math.max(0, scoreJugador);
-        // scoreOponente = Math.max(0, scoreOponente);
+        
         actualizarMarcadores();
-        const mensaje = `¡Ronda para ${ganador}!<br>
-        Puntos de la Quinta: ${puntosRonda > 0 ? puntosRonda : 'N/A'}<br>
-        Puntos restados al perdedor: ${puntosNegativos}<br>
-        <br>
-        Puntuación actual:<br>
-        ${playerNameDisplay.textContent}: ${scoreJugador}<br>
+
+        const nombreGanador = (ganador === 'jugador') ? playerNameDisplay.textContent : 'Zaldor';
+        const nombrePerdedor = (ganador === 'jugador') ? 'Zaldor' : playerNameDisplay.textContent;
+
+        const mensaje = `&lt;b&gt;¡Ronda para ${nombreGanador}!&lt;/b&gt;&lt;br&gt;
+        ${mensajeDetallado}&lt;br&gt;
+        ${nombrePerdedor} resta &lt;b&gt;${puntosNegativos}&lt;/b&gt; puntos por las cartas en su mano.&lt;br&gt;
+        &lt;br&gt;
+        &lt;u&gt;Puntuación actual:&lt;/u&gt;&lt;br&gt;
+        ${playerNameDisplay.textContent}: ${scoreJugador}&lt;br&gt;
         Zaldor: ${scoreOponente}`;
+        
         actualizarMensaje(mensaje);
+
         if (scoreJugador >= 100 || scoreOponente >= 100) {
             setTimeout(() => terminarJuego(), 2000);
         } else {
@@ -401,6 +435,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (escaleraEncontrada) {
             const elixir = cartasPresentadas.find(c => c.isEV && !c.isJoker);
             const quintaCartas = [...new Set([...escaleraEncontrada, elixir])];
+
+            if (quintaCartas.length < 5) {
+                if (showMessage) actualizarMensaje("La combinación de la escalera y el Elixir Vital debe sumar al menos 5 cartas únicas.");
+                return null;
+            }
+
             if (DEBUG) console.log("Quinta final:", quintaCartas.map(c=>c.id));
             return { tipo: 'Normal', cartas: quintaCartas };
         } else {
@@ -505,7 +545,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 5. ACTUALIZACIÓN DE LA INTERFAZ ---
     // =================================================================================
 
-    function actualizarMensaje(texto) { if(messageElement) messageElement.innerHTML = `<p>${texto}</p>`; }
+    function actualizarMensaje(texto) { 
+        if(!messageElement) return;
+        const mensajeElement = document.createElement('p');
+        mensajeElement.className = 'system-message'; // Clase por defecto
+        mensajeElement.innerHTML = texto;
+        messageElement.prepend(mensajeElement);
+    }
 
     function actualizarMarcadores() {
         if(playerScoreElement) playerScoreElement.textContent = scoreJugador;
@@ -647,27 +693,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 7. LÓGICA DEL OPONENTE ---
     // =================================================================================
 
+    function getReadableCardName(card) {
+        if (!card) return '';
+        if (card.isJoker) return "Comodín";
+        return `${card.valor} de ${card.palo}`;
+    }
+
     function turnoOponente() {
-        if (Math.random() < 0.5) {
-            setTimeout(mostrarMensajeZaldor, 500);
-        }
-        if (mazo.length === 0) {
-            turnoDelJugador = true;
-            actualizarMensaje("El mazo está vacío. Tu turno.");
-            return;
-        }
-        manoOponente.push(mazo.pop());
-        const resultadoOponente = comprobarQuinta(manoOponente, false);
-        if (resultadoOponente) {
-            actualizarVistas();
-            terminarRonda('oponente', resultadoOponente);
-            return;
-        }
-        const cartaADescartar = manoOponente.splice(Math.floor(Math.random() * manoOponente.length), 1)[0];
-        pozo.push(cartaADescartar);
-        turnoDelJugador = true;
-        actualizarVistas();
-        actualizarMensaje("Tu turno. Roba una carta del mazo o del pozo.");
+        setTimeout(() => {
+            if (Math.random() < 0.4) { // Random Zaldor chatter
+                mostrarMensajeZaldor();
+            }
+        }, 600);
+
+        setTimeout(() => {
+            if (mazo.length === 0) {
+                turnoDelJugador = true;
+                actualizarMensaje("El mazo está vacío. Tu turno.");
+                return;
+            }
+
+            // Zaldor draws
+            const cartaRobada = mazo.pop();
+            manoOponente.push(cartaRobada);
+            mostrarMensajeOponente("Zaldor roba una carta del mazo.");
+            actualizarVistas(); // Update view to show one less card in deck
+
+            // Zaldor thinks...
+            setTimeout(() => {
+                const resultadoOponente = comprobarQuinta(manoOponente, false);
+                if (resultadoOponente) {
+                    terminarRonda('oponente', resultadoOponente);
+                    return;
+                }
+
+                // Zaldor discards
+                const cartaADescartar = manoOponente.splice(Math.floor(Math.random() * manoOponente.length), 1)[0];
+                pozo.push(cartaADescartar);
+                mostrarMensajeOponente(`Zaldor descarta un <b>${getReadableCardName(cartaADescartar)}</b>.`);
+                
+                turnoDelJugador = true;
+                actualizarVistas();
+                actualizarMensaje("Tu turno. Roba una carta del mazo o del pozo.");
+            }, 1200); // Delay for thinking
+
+        }, 1500); // Delay for drawing
     }
 
     // =================================================================================
@@ -699,4 +769,37 @@ document.addEventListener('DOMContentLoaded', () => {
             terminarRonda('jugador', resultado);
         }
     });
+
+    if (sortByNumberBtn) {
+        sortByNumberBtn.addEventListener('click', () => {
+            manoJugador.sort((a, b) => {
+                if (a.isJoker) return 1;
+                if (b.isJoker) return -1;
+                const diffValor = parseInt(a.valor) - parseInt(b.valor);
+                if (diffValor !== 0) return diffValor;
+                return ORDEN_PALO_COBOE[a.palo] - ORDEN_PALO_COBOE[b.palo];
+            });
+            actualizarVistas();
+        });
+    }
+
+    if (sortBySuitBtn) {
+        sortBySuitBtn.addEventListener('click', () => {
+            manoJugador.sort((a, b) => {
+                if (a.isJoker) return 1;
+                if (b.isJoker) return -1;
+                const diffPalo = ORDEN_PALO_COBOE[a.palo] - ORDEN_PALO_COBOE[b.palo];
+                if (diffPalo !== 0) return diffPalo;
+                
+                if (isSequenceSortAscending) {
+                    return parseInt(a.valor) - parseInt(b.valor);
+                } else {
+                    return parseInt(b.valor) - parseInt(a.valor);
+                }
+            });
+            
+            isSequenceSortAscending = !isSequenceSortAscending; // Toggle the state
+            actualizarVistas();
+        });
+    }
 });

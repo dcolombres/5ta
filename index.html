@@ -14,19 +14,16 @@
 
     <!-- PANTALLA DE INICIO -->
     <div id="splash-screen">
-        <div id="splash-left">
-            <div class="splash-content-wrapper">
-                <img src="img/logo.png" alt="Logo La Quinta" id="splash-logo">
-                <h2>LA QUINTA</h2>
-                <h3>DESAFIO ZALDOR</h3>
-                <p class="subtitle">el juego de las fórmulas secretas</p>
-                <input type="text" id="player-name-input" placeholder="Tu nombre..." maxlength="20">
-                <button id="start-game-button">Jugar</button>
-            </div>
-        </div>
-        <div id="splash-right">
+        <div class="splash-content-wrapper">
+            <img src="img/logo.png" alt="Logo La Quinta" id="splash-logo">
+            <h2>LA QUINTA</h2>
+            <h3>DESAFIO ZALDOR</h3>
+            <p class="subtitle">el juego de las fórmulas secretas</p>
+            
+            <input type="text" id="player-name-input" placeholder="Tu nombre..." maxlength="20">
+            <button id="start-game-button">Jugar</button>
+
             <div class="instructions">
-                
                 <p>Demostrá tu astucia y estrategia contra el maestro del mazo, <strong>Zaldor "El Alquimista"</strong>. Sé el primero en alcanzar los 100 puntos y arrebátale el título.</p>
                 <h4>¿Cómo ganar una ronda?</h4>
                 <p>Presentando una "Quinta": una jugada de 5+ cartas que cumpla dos condiciones:</p>
@@ -34,19 +31,36 @@
                     <li>Debe contener una Escalera de 4+ cartas respetando el orden de palos: <strong>Copas -> Bastos -> Oros -> Espadas.</strong></li>
                     <li>Debe contener al menos un <strong>Elixir Vital</strong> (10, 11 o 12 real, no comodín).</li>
                 </ol>
-                <p>Los comodines reemplazan cartas (no al elixir vital). Cuando ya tenes una Quinta, llevala al área de presentación y cliqueá en "Cantar Quinta"</p>
-                <a href="img/reglas.pdf" target="_blank" class="rules-link-splash">Ver Reglamento Completo</a>
+                <p>Los comodines reemplazan cartas (no al elixir vital). Cuando ya tenes una Quinta, llevala al área de presentación y cliqueá en "5TA"</p>
             </div>
+            <a href="img/reglas.pdf" target="_blank" class="rules-link-splash">Ver Reglamento Completo</a>
         </div>
     </div>
 
     <!-- PANTALLA DE JUEGO (Oculta al inicio) -->
     <main id="game-container">
+        <div id="scores-area" class="score-container">
+            <div id="player-score-area" class="score-area">
+                <span id="player-name-display">Jugador</span>: <span id="player-score">0</span>
+            </div>
+            <div id="opponent-score-area" class="score-area">
+                <span>Zaldor</span>: <span id="opponent-score">0</span>
+            </div>
+        </div>
+
         <div id="game-board">
 
             <!-- 1. ZONA DEL JUGADOR (MANO Y QUINTA) -->
             <div id="player-area" class="game-section">
-                <h2>Tu Juego</h2>
+                <div class="hand-title-container">
+                    <h2>Tu Juego</h2>
+                    <div class="sort-buttons">
+                        <button id="sort-by-number-btn" title="Ordenar por número">N°</button>
+                        <button id="sort-by-suit-btn" title="Ordenar por secuencia">Secuencia</button>
+                        <a href="img/reglas.pdf" target="_blank" id="rules-link" title="Ver reglamento">(?)</a>
+                        <button id="scoring-guide-button" title="Guía de Puntos">Pts</button>
+                    </div>
+                </div>
                 <div id="player-hand" class="hand"></div>
                 <h2 style="margin-top: 10px;">Area de Presentacion</h2>
                 <div id="quinta-area" class="hand"></div>
@@ -65,30 +79,17 @@
                     </div>
                 </div>
                 <div class="table-controls">
-                    <button id="check-quinta-button" disabled>Cantar Quinta</button>
+                    <button id="check-quinta-button" disabled>5TA</button>
                     <button id="continue-game-button" style="display: none;">Continuar Juego</button>
                 </div>
             </div>
 
             <!-- 3. ZONA DE INFORMACIÓN (MENSAJES Y GUÍAS) -->
             <div id="info-area" class="game-section">
-                <div class="title-wrapper">
-                    <h2>Guía</h2>
-                    <a href="img/reglas.pdf" target="_blank" id="rules-link">(?)</a>
-                    <button id="scoring-guide-button">Pts</button> <!-- Botón para la guía de puntos -->
-                </div>
                 <div id="message-area"></div>
             </div>
 
-            <!-- 4. ZONA DE PUNTAJES -->
-            <div id="scores-area" class="score-container">
-                <div id="player-score-area" class="score-area">
-                    <span id="player-name-display">Jugador</span>: <span id="player-score">0</span>
-                </div>
-                <div id="opponent-score-area" class="score-area">
-                    <span>Zaldor</span>: <span id="opponent-score">0</span>
-                </div>
-            </div>
+
 
         </div>
     </main>

@@ -22,9 +22,11 @@ En tu turno, debes realizar una de las siguientes acciones:
 
 Después de robar, siempre debes **descartar** una carta de tu mano al pozo para finalizar tu turno.
 
+Para facilitar la organización de tu mano, dispones de botones para ordenar tus cartas automáticamente por número o por secuencia de palos (creciente/decreciente).
+
 ### Cantar Quinta
 
-Para ganar una ronda, debes formar una **Quinta** en tu área de presentación y pulsar el botón "Cantar Quinta". Una Quinta válida debe cumplir con los siguientes requisitos:
+Para ganar una ronda, debes formar una **Quinta** en tu área de presentación y pulsar el botón "5TA". Una Quinta válida debe cumplir con los siguientes requisitos:
 
 1.  **Mínimo 5 Cartas:** La combinación debe tener 5 o más cartas.
 2.  **Elixir Vital:** Debe contener al menos un **Elixir Vital** (10, 11 o 12) que no sea un comodín.
@@ -41,6 +43,7 @@ Este proyecto está construido con tecnologías web fundamentales, sin necesidad
 -   **CSS3:** Para los estilos y la estética visual.
 -   **JavaScript (ES6+):** Para toda la lógica y la interactividad del juego.
 -   **Sortable.js:** Una librería ligera para la funcionalidad de arrastrar y soltar las cartas.
+-   **Diseño Responsivo (Mobile-First):** La interfaz está diseñada para adaptarse y ser completamente funcional tanto en dispositivos móviles como en escritorio.
 
 ## Mejoras a Futuro
 

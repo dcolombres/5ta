@@ -11,25 +11,25 @@ body {
 /* --- PANTALLA DE INICIO --- */
 #splash-screen {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100vw;
-    height: 100vh;
-    background: radial-gradient(circle, #063852, #011a27);
-}
-
-#splash-left, #splash-right {
-    width: 45%;
-    padding: 40px;
-    box-sizing: border-box;
-    display: flex;
     flex-direction: column;
     justify-content: center;
-}
-
-#splash-left {
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    background: radial-gradient(circle, #063852, #011a27);
     text-align: center;
 }
+
+.splash-content-wrapper {
+    max-width: 600px;
+    width: 100%;
+}
+
+.splash-content-wrapper h2 { font-size: 3em; color: #00a9b7; margin: 0; text-shadow: 0 0 8px rgba(0,0,0,0.6); }
+.splash-content-wrapper h3 { font-size: 1.5em; margin: 5px 0; color: #e0e0e0; }
+.splash-content-wrapper .subtitle { font-size: 1.2em; margin: 5px 0 30px 0; color: #e0e0e0; text-shadow: 0 0 4px rgba(0,0,0,0.6);}
 
 #splash-logo {
     max-width: 120px;
@@ -37,34 +37,107 @@ body {
     filter: drop-shadow(0 0 10px rgba(0, 169, 183, 0.5));
 }
 
-#splash-left h2 { font-size: 3em; color: #00a9b7; margin: 0; text-shadow: 0 0 8px rgba(0,0,0,0.6); }
-#splash-left h3 { font-size: 1.5em; margin: 5px 0; color: #e0e0e0; }
-#splash-left .subtitle { font-size: 1.2em; margin: 5px 0 30px 0; color: #e0e0e0; text-shadow: 0 0 4px rgba(0,0,0,0.6);}
-#splash-left input { font-size: 1.1em; padding: 10px; border-radius: 6px; border: 2px solid #00a9b7; background-color: rgba(0,0,0,0.4); color: white; text-align: center; width: 70%; margin: 0 auto; }
-#start-game-button { font-size: 1.2em; padding: 15px 35px; border-radius: 10px; border: none; background-color: #00a9b7; color: #011a27; cursor: pointer; margin-top: 25px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-#start-game-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.6); background-color: #00c4d4; }
-#splash-right .instructions { background-color: rgba(0, 0, 0, 0.2); padding: 30px; border-radius: 12px; border: 1px solid #00a9b7; height: 100%; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+.instructions {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #00a9b7;
+    margin: 30px 0;
+    text-align: left;
+}
+
 .instructions h4 { font-size: 1.2em; color: #00a9b7; margin-top: 20px; }
 .instructions p, .instructions li { font-size: 1em; line-height: 1.6; color: #e0e0e0; }
 .instructions ol { padding-left: 20px; }
+
 .rules-link-splash { display: inline-block; margin-top: 20px; color: #00a9b7; font-weight: bold; text-decoration: none; border: 1px solid #00a9b7; padding: 10px 15px; border-radius: 6px; transition: all 0.3s ease; }
 .rules-link-splash:hover { background-color: #00a9b7; color: #011a27; transform: scale(1.05); }
 
+#player-name-input { font-size: 1.1em; padding: 10px; border-radius: 6px; border: 2px solid #00a9b7; background-color: rgba(0,0,0,0.4); color: white; text-align: center; width: 80%; max-width: 300px; margin: 20px auto; display: block; }
+#start-game-button { font-size: 1.2em; padding: 15px 35px; border-radius: 10px; border: none; background-color: #00a9b7; color: #011a27; cursor: pointer; margin-top: 25px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+#start-game-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.6); background-color: #00c4d4; }
+
 .zaldor-message { color: cyan; font-style: italic; }
 .system-message { color: #a7ff89; }
+.opponent-action-message { color: yellow; }
 
 /* --- MOBILE FIRST LAYOUT --- */
 
 #game-container { display: none; width: 100%; min-height: 100vh; justify-content: center; align-items: flex-start; }
-#game-board { display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 10px; box-sizing: border-box; background-color: #0e203a; }
+#game-board { display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 60px 10px 150px 10px; box-sizing: border-box; background-color: #0e203a; background-image: url('img/formula2.png'); }
 .game-section { width: 100%; margin-bottom: 10px; }
 
 #player-area { order: 1; flex-grow: 1; display: flex; flex-direction: column; }
 #table-area { order: 2; }
-#info-area { order: 3; }
-#scores-area { order: 4; margin-top: auto; padding-top: 10px; border-top: 1px solid #c9a40a; }
+#info-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #011a27;
+    padding: 10px;
+    box-sizing: border-box;
+    border-top: 2px solid #c9a40a;
+    z-index: 100;
+}
+#scores-area {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #011a27;
+    padding: 10px 0;
+    border-bottom: 2px solid #c9a40a;
+    z-index: 100;
+}
 
 h2 { margin: 10px 0; text-align: center; font-size: 1.1em; }
+
+.hand-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.hand-title-container h2 {
+    margin: 0; /* Remove default margin */
+}
+
+.sort-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.sort-buttons > * {
+    background-color: #011a27;
+    border: 1px solid #c9a40a;
+    color: #c9a40a;
+    padding: 3px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+    font-weight: bold;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.sort-buttons > *:hover {
+    background-color: #c9a40a;
+    color: #011a27;
+}
+
+/* Specific style for the round button */
+#rules-link {
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    line-height: 22px; /* Adjust for vertical centering */
+    padding: 0;
+    box-sizing: border-box;
+}
 #player-area .hand { flex-grow: 1; }
 
 #table-area .table-row { display: flex; justify-content: space-around; gap: 10px; }
@@ -73,22 +146,42 @@ h2 { margin: 10px 0; text-align: center; font-size: 1.1em; }
 #discard-pile .card { pointer-events: none; }
 
 .table-controls { margin-top: 10px; width: 100%; text-align: center; }
-#check-quinta-button, #continue-game-button { width: 100%; padding: 15px; font-size: 1.1em; cursor: pointer; border: none; border-radius: 5px; background-color: #00a9b7; color: #011a27; font-weight: bold; }
+#check-quinta-button {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #d92027;
+    color: white;
+    font-size: 1.8em;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    border: 2px solid #ff5722;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    cursor: pointer;
+    margin: 0 auto 10px auto; /* Centered with some bottom margin */
+    display: block;
+    transition: all 0.2s ease;
+}
+
+#check-quinta-button:hover {
+    background-color: #ff414d;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+    transform: scale(1.05);
+}
+
+#continue-game-button { width: 100%; padding: 15px; font-size: 1.1em; cursor: pointer; border: none; border-radius: 5px; background-color: #00a9b7; color: #011a27; font-weight: bold; margin-bottom: 10px; }
 #continue-game-button { display: none; }
 button:disabled { background-color: #888; cursor: not-allowed; }
 
-.title-wrapper { display: flex; justify-content: center; align-items: center; gap: 10px; }
-#rules-link, #scoring-guide-button { display: inline-block; color: #c9a40a; border: 1px solid #c9a40a; border-radius: 50%; width: 24px; height: 24px; line-height: 24px; text-align: center; text-decoration: none; font-weight: bold; background: none; cursor: pointer; padding: 0; }
-#scoring-guide-button { border-radius: 5px; width: auto; padding: 0 8px; }
-#rules-link:hover, #scoring-guide-button:hover { background-color: #c9a40a; color: #112c19; }
 
-#message-area { width: 100%; height: 140px; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; padding: 10px; box-sizing: border-box; overflow-y: auto; margin-top: 10px; }
+
+#message-area { width: 100%; height: 80px; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; padding: 10px; box-sizing: border-box; margin-top: 10px; overflow-y: auto; }
 
 .score-container { display: flex; justify-content: space-around; width: 100%; }
 .score-area { width: 45%; text-align: center; font-size: 1em; font-weight: bold; color: #c9a40a; }
 
 /* --- CARD STYLING (MOBILE) --- */
-.hand { width: 100%; min-height: 120px; display: flex; align-items: center; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; border: 1px dashed #00a9b7; padding: 10px; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; }
+.hand { width: 100%; min-height: 120px; display: flex; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; border: 1px dashed #00a9b7; padding: 10px; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; }
 #quinta-area { border-color: #87ceeb; }
 
 .card { height: 115px; width: auto; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.637); cursor: pointer; flex-shrink: 0; transition: transform 0.2s ease; }
@@ -119,7 +212,7 @@ button:disabled { background-color: #888; cursor: not-allowed; }
     #player-area { width: 45%; order: 1; }
     #table-area { width: 20%; order: 2; justify-content: space-around; }
     #info-area { width: 35%; order: 3; }
-    #scores-area { display: none; } /* Ocultar el área de scores separada en desktop */
+
 
     /* Re-activar scores dentro de la columna del jugador en desktop */
     #player-area .score-container { display: flex; }
