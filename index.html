@@ -44,31 +44,25 @@
     <main id="game-container">
         <div id="game-board">
 
-            <!-- COLUMNA IZQUIERDA: ZONA DEL JUGADOR -->
-            <div id="player-column" class="game-column">
-                <div class="score-container">
-                    <div id="player-score-area" class="score-area">
-                        <span id="player-name-display">Jugador</span>: <span id="player-score">0</span>
-                    </div>
-                    <div id="opponent-score-area" class="score-area">
-                        <span>Zaldor</span>: <span id="opponent-score">0</span>
-                    </div>
-                </div>
+            <!-- 1. ZONA DEL JUGADOR (MANO Y QUINTA) -->
+            <div id="player-area" class="game-section">
                 <h2>Tu Juego</h2>
                 <div id="player-hand" class="hand"></div>
-                <h2 style="margin-top: 20px;">Area de Presentacion</h2>
+                <h2 style="margin-top: 10px;">Area de Presentacion</h2>
                 <div id="quinta-area" class="hand"></div>
             </div>
 
-            <!-- COLUMNA CENTRAL: ZONA DE JUEGO -->
-            <div id="table-column" class="game-column">
-                <div id="deck-area">
-                    <h2>Mazo</h2>
-                    <div id="deck"></div>
-                </div>
-                <div id="discard-pile-area">
-                    <h2>Pozo</h2>
-                    <div id="discard-pile" class="hand"></div>
+            <!-- 2. ZONA DE JUEGO (MAZO Y POZO) -->
+            <div id="table-area" class="game-section">
+                <div class="table-row">
+                    <div id="deck-area">
+                        <h2>Mazo</h2>
+                        <div id="deck"></div>
+                    </div>
+                    <div id="discard-pile-area">
+                        <h2>Pozo</h2>
+                        <div id="discard-pile" class="hand"></div>
+                    </div>
                 </div>
                 <div class="table-controls">
                     <button id="check-quinta-button" disabled>Cantar Quinta</button>
@@ -76,22 +70,23 @@
                 </div>
             </div>
 
-            <!-- COLUMNA DERECHA: INFORMACIÓN Y ACCIONES -->
-            <div id="info-column" class="game-column">
+            <!-- 3. ZONA DE INFORMACIÓN (MENSAJES Y GUÍAS) -->
+            <div id="info-area" class="game-section">
                 <div class="title-wrapper">
                     <h2>Guía</h2>
                     <a href="img/reglas.pdf" target="_blank" id="rules-link">(?)</a>
+                    <button id="scoring-guide-button">Pts</button> <!-- Botón para la guía de puntos -->
                 </div>
                 <div id="message-area"></div>
-                <div id="scoring-rules">
-                    <p>Ejemplos y Puntuación de Quintas</p>
-                    <ul>
-                        <li id="example-5-cards"><strong>Quinta simple de 5 cartas:</strong> +10 Pts</li>
-                        <li id="example-6-cards"><strong>Quinta de 6 cartas:</strong> +30 Pts</li>
-                        <li id="example-7-cards"><strong>Quinta completa de 7 cartas:</strong> +40 Pts</li>
-                        <li id="example-real-quinta"><strong>Quinta Real:</strong> +50 Pts</li>
-                        <li id="example-imperial-quinta"><strong>Quinta Imperial:</strong> +70 Pts</li>
-                    </ul>
+            </div>
+
+            <!-- 4. ZONA DE PUNTAJES -->
+            <div id="scores-area" class="score-container">
+                <div id="player-score-area" class="score-area">
+                    <span id="player-name-display">Jugador</span>: <span id="player-score">0</span>
+                </div>
+                <div id="opponent-score-area" class="score-area">
+                    <span>Zaldor</span>: <span id="opponent-score">0</span>
                 </div>
             </div>
 
@@ -104,6 +99,23 @@
             <button class="close-button">&times;</button>
             <h3 id="example-modal-title"></h3>
             <div id="example-modal-cards" class="hand"></div>
+        </div>
+    </div>
+
+    <!-- MODAL DE GUÍA DE PUNTOS -->
+    <div id="scoring-guide-modal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <button class="close-button">&times;</button>
+            <div id="scoring-rules">
+                <p>Ejemplos y Puntuación de Quintas</p>
+                <ul>
+                    <li id="example-5-cards"><strong>Quinta simple de 5 cartas:</strong> +10 Pts</li>
+                    <li id="example-6-cards"><strong>Quinta de 6 cartas:</strong> +30 Pts</li>
+                    <li id="example-7-cards"><strong>Quinta completa de 7 cartas:</strong> +40 Pts</li>
+                    <li id="example-real-quinta"><strong>Quinta Real:</strong> +50 Pts</li>
+                    <li id="example-imperial-quinta"><strong>Quinta Imperial:</strong> +70 Pts</li>
+                </ul>
+            </div>
         </div>
     </div>
 

@@ -162,8 +162,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if(closeExampleModalButton) closeExampleModalButton.addEventListener('click', () => {
-        exampleModalOverlay.style.display = 'none';
+        if (exampleModalOverlay) exampleModalOverlay.style.display = 'none';
     });
+
+    const scoringGuideButton = document.getElementById('scoring-guide-button');
+    const scoringGuideModal = document.getElementById('scoring-guide-modal');
+    if (scoringGuideModal) {
+        const closeScoringModalButton = scoringGuideModal.querySelector('.close-button');
+
+        if (scoringGuideButton) {
+            scoringGuideButton.addEventListener('click', () => {
+                scoringGuideModal.style.display = 'flex';
+            });
+        }
+
+        if (closeScoringModalButton) {
+            closeScoringModalButton.addEventListener('click', () => {
+                scoringGuideModal.style.display = 'none';
+            });
+        }
+
+        scoringGuideModal.addEventListener('click', (event) => {
+            if (event.target === scoringGuideModal) {
+                scoringGuideModal.style.display = 'none';
+            }
+        });
+    }
 
     Object.keys(ejemplos).forEach(id => {
         const elem = document.getElementById(id);
@@ -299,8 +323,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 quintaAreaElement.appendChild(cardView);
             });
         }
-        scoreJugador = Math.max(0, scoreJugador);
-        scoreOponente = Math.max(0, scoreOponente);
+        // scoreJugador = Math.max(0, scoreJugador);
+        // scoreOponente = Math.max(0, scoreOponente);
         actualizarMarcadores();
         const mensaje = `¡Ronda para ${ganador}!<br>
         Puntos de la Quinta: ${puntosRonda > 0 ? puntosRonda : 'N/A'}<br>
@@ -570,19 +594,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function robarDelPozo() {
-        if (!turnoDelJugador || haRobado || esperandoPagoPozo || modoRobar) return;
+        // Si el jugador ya ha robado, o no es su turno, o está en modo ladrón, no hace nada.
+        if (!turnoDelJugador || haRobado || modoRobar) return;
+
+        // Si ya estaba esperando pagar, un nuevo clic en el pozo cancela la acción.
         if (esperandoPagoPozo) {
             esperandoPagoPozo = false;
             actualizarMensaje("Acción cancelada. Elige tu jugada.");
             return;
         }
+
+        // Lógica para iniciar el robo del pozo
         if (pozo.length === 0) return;
         if (!manoJugador.some(c => c.isEV)) {
             actualizarMensaje("No tienes un Elixir Vital (10, 11 o 12) para pagar.");
             return;
         }
         esperandoPagoPozo = true;
-        actualizarMensaje("Para tomar una carta del pozo, debes pagar con un Elixir Vital (10, 11 o 12) de tu mano. Haz clic en el Elixir que quieres usar.");
+        actualizarMensaje("Para tomar del pozo, paga con un Elixir Vital (10, 11 o 12) de tu mano, o <b>vuelve a clicar en el pozo para cancelar.</b>");
     }
 
     function gestionarClickCartaMano(cardId) {
