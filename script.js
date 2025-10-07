@@ -364,12 +364,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const nombreGanador = (ganador === 'jugador') ? playerNameDisplay.textContent : 'Zaldor';
         const nombrePerdedor = (ganador === 'jugador') ? 'Zaldor' : playerNameDisplay.textContent;
 
-        const mensaje = `&lt;b&gt;¡Ronda para ${nombreGanador}!&lt;/b&gt;&lt;br&gt;
-        ${mensajeDetallado}&lt;br&gt;
-        ${nombrePerdedor} resta &lt;b&gt;${puntosNegativos}&lt;/b&gt; puntos por las cartas en su mano.&lt;br&gt;
-        &lt;br&gt;
-        &lt;u&gt;Puntuación actual:&lt;/u&gt;&lt;br&gt;
-        ${playerNameDisplay.textContent}: ${scoreJugador}&lt;br&gt;
+        const mensaje = `<b>¡Ronda para ${nombreGanador}!</b><br>
+        ${mensajeDetallado}<br>
+        ${nombrePerdedor} resta <b>${puntosNegativos}</b> puntos por las cartas en su mano.<br>
+        <br>
+        <u>Puntuación actual:</u><br>
+        ${playerNameDisplay.textContent}: ${scoreJugador}<br>
         Zaldor: ${scoreOponente}`;
         
         actualizarMensaje(mensaje);
@@ -387,9 +387,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if(continueGameButton) continueGameButton.addEventListener('click', () => {
         continueGameButton.style.display = 'none';
         checkQuintaButton.style.display = 'block';
-        const quintaAreaTitle = quintaAreaElement.previousElementSibling;
-        quintaAreaTitle.textContent = "Area de Presentacion";
-        quintaAreaTitle.classList.remove("opponent-quinta-title");
         repartir();
     });
 
@@ -500,7 +497,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check suit order
             const expected_p2 = esAscendente ? (p1 + diffValor) % 4 : (p1 - diffValor % 4 + 4) % 4;
             if (expected_p2 !== p2) {
-                if (DEBUG) console.log(`Validación fallida: orden de palo incorrecto. Se esperaba ${expected_p2}, se obtuvo ${p2}`);
+                if (DEBUG) {
+                    console.log(`Validación fallida: orden de palo incorrecto para ${esAscendente ? 'asc' : 'desc'}`);
+                    console.log(`Carta 1: ${c1.id}, Carta 2: ${c2.id}`);
+                    console.log(`p1: ${p1}, p2: ${p2}, diffValor: ${diffValor}, expected_p2: ${expected_p2}`);
+                }
                 return false;
             }
 
