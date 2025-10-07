@@ -64,7 +64,7 @@ body {
 /* --- MOBILE FIRST LAYOUT --- */
 
 #game-container { display: none; width: 100%; min-height: 100vh; justify-content: center; align-items: flex-start; }
-#game-board { display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 60px 10px 150px 10px; box-sizing: border-box; background-color: #0e203a; background-image: url('img/formula2.png'); }
+#game-board { display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 60px 10px 200px 10px; box-sizing: border-box; background-color: #0e203a; background-image: url('img/formula2.png'); }
 .game-section { width: 100%; margin-bottom: 10px; }
 
 #player-area { order: 1; flex-grow: 1; display: flex; flex-direction: column; }
@@ -75,7 +75,7 @@ body {
     left: 0;
     width: 100%;
     background-color: #011a27;
-    padding: 10px;
+    padding: 5px 10px;
     box-sizing: border-box;
     border-top: 2px solid #c9a40a;
     z-index: 100;
@@ -175,7 +175,7 @@ button:disabled { background-color: #888; cursor: not-allowed; }
 
 
 
-#message-area { width: 100%; height: 120px; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; padding: 10px; box-sizing: border-box; margin-top: 10px; overflow-y: auto; }
+#message-area { width: 100%; height: 150px; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; padding: 10px; box-sizing: border-box; margin-top: 5px; overflow-y: auto; }
 
 .score-container { display: flex; justify-content: space-around; width: 100%; }
 .score-area { width: 45%; text-align: center; font-size: 1em; font-weight: bold; color: #c9a40a; }

@@ -4,30 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visor y Verificador del Mazo</title>
-    <link rel="stylesheet" href="style.css"> <!-- Use main stylesheet -->
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* Keep some specific styles for this page */
         body {
             background-color: #063852;
             color: white;
             font-family: 'Poppins', sans-serif;
-            overflow: auto !important; /* Ensure scrolling is enabled */
+            overflow: hidden; /* Hide main scrollbar */
+        }
+        #page-container {
+            display: flex;
+            height: 100vh;
+        }
+        #left-column, #right-column {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto; /* Allow independent scrolling */
+            box-sizing: border-box;
+        }
+        #left-column {
+            border-right: 2px solid #011a27;
         }
         h1, p {
             text-align: center;
-            padding: 10px 20px;
-        }
-        hr {
-            margin: 20px;
-            border-color: rgba(255,255,255,0.1);
+            padding: 10px 0;
         }
         #mazo-completo {
             min-height: 300px;
-        }
-        #checker-container {
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
         }
         #checker-hand {
             min-height: 180px;
@@ -41,6 +44,7 @@
             font-size: 1.1em;
             padding: 10px 20px;
             margin: 0 10px;
+            cursor: pointer;
         }
         #checker-console {
             background-color: #011a27;
@@ -50,29 +54,38 @@
             border-radius: 5px;
             font-family: monospace;
         }
+        h1 {
+            font-size: 1.6em;
+        }
+        .card {
+            height: 104px !important;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Visor de Cartas</h1>
-    <p>Arrastra las cartas de abajo hacia el área de verificación para probar una jugada.</p>
-    <div id="mazo-completo" class="hand">
-        <!-- Las imágenes de las cartas se generarán aquí -->
-    </div>
-
-    <hr>
-
-    <h1>Verificador de Quintas</h1>
-    <div id="checker-container">
-        <div id="checker-hand" class="hand">
-            <!-- Drop cards here -->
+    <div id="page-container">
+        <div id="left-column">
+            
+            <p>Arrastra las cartas al área de la derecha para probar una jugada.</p>
+            <div id="mazo-completo" class="hand">
+                <!-- Las imágenes de las cartas se generarán aquí -->
+            </div>
         </div>
-        <div id="checker-controls">
-            <button id="verify-quinta-btn">Verificar Jugada</button>
-            <button id="clear-checker-btn">Limpiar</button>
-        </div>
-        <div id="checker-console">
-            <p>Los resultados aparecerán aquí...</p>
+        <div id="right-column">
+            <h1>Verificador de Quintas</h1>
+            <div id="checker-container">
+                <div id="checker-hand" class="hand">
+                    <!-- Drop cards here -->
+                </div>
+                <div id="checker-controls">
+                    <button id="verify-quinta-btn">Verificar Jugada</button>
+                    <button id="clear-checker-btn">Limpiar</button>
+                </div>
+                <div id="checker-console">
+                    <p>Los resultados aparecerán aquí...</p>
+                </div>
+            </div>
         </div>
     </div>
 
