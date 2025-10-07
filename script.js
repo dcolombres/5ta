@@ -547,10 +547,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function actualizarMensaje(texto) { 
         if(!messageElement) return;
-        const mensajeElement = document.createElement('p');
-        mensajeElement.className = 'system-message'; // Clase por defecto
-        mensajeElement.innerHTML = texto;
-        messageElement.prepend(mensajeElement);
+        const p = document.createElement('p');
+        p.className = 'system-message'; // Clase por defecto
+        p.innerHTML = texto;
+        messageElement.prepend(p);
     }
 
     function actualizarMarcadores() {
