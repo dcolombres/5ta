@@ -3,40 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visor del Mazo Completo</title>
+    <title>Visor y Verificador del Mazo</title>
+    <link rel="stylesheet" href="style.css"> <!-- Use main stylesheet -->
     <style>
+        /* Keep some specific styles for this page */
         body {
-            background-color: #333;
-            font-family: sans-serif;
+            background-color: #063852;
             color: white;
+            font-family: 'Poppins', sans-serif;
+            overflow: auto !important; /* Ensure scrolling is enabled */
+        }
+        h1, p {
+            text-align: center;
+            padding: 10px 20px;
+        }
+        hr {
+            margin: 20px;
+            border-color: rgba(255,255,255,0.1);
         }
         #mazo-completo {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
+            min-height: 300px;
+        }
+        #checker-container {
             padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
         }
-        #mazo-completo img {
-            height: 150px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        #checker-hand {
+            min-height: 180px;
+            border-style: solid;
         }
-        h1 {
+        #checker-controls {
             text-align: center;
-            padding: 20px;
+            margin: 20px 0;
+        }
+        #checker-controls button {
+            font-size: 1.1em;
+            padding: 10px 20px;
+            margin: 0 10px;
+        }
+        #checker-console {
+            background-color: #011a27;
+            border: 1px solid #c9a40a;
+            padding: 15px;
+            min-height: 100px;
+            border-radius: 5px;
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
 
     <h1>Visor de Cartas</h1>
-    <p style="text-align: center;">Si una carta no se ve, significa que el nombre del archivo no coincide con el esperado. Pasa el ratón sobre el icono de imagen rota para ver el nombre que el sistema está buscando.</p>
-    <hr>
-
-    <div id="mazo-completo">
+    <p>Arrastra las cartas de abajo hacia el área de verificación para probar una jugada.</p>
+    <div id="mazo-completo" class="hand">
         <!-- Las imágenes de las cartas se generarán aquí -->
     </div>
 
+    <hr>
+
+    <h1>Verificador de Quintas</h1>
+    <div id="checker-container">
+        <div id="checker-hand" class="hand">
+            <!-- Drop cards here -->
+        </div>
+        <div id="checker-controls">
+            <button id="verify-quinta-btn">Verificar Jugada</button>
+            <button id="clear-checker-btn">Limpiar</button>
+        </div>
+        <div id="checker-console">
+            <p>Los resultados aparecerán aquí...</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="mazo.js"></script>
 </body>
 </html>
