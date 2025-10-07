@@ -310,6 +310,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ... (resto del código)
 
+    function mostrarQuintaGanadora(title, cards) {
+        if (!exampleModalOverlay) return;
+        if (exampleModalTitle) exampleModalTitle.textContent = title;
+        if (exampleModalCards) {
+            exampleModalCards.innerHTML = '';
+            cards.forEach(carta => {
+                const cardView = crearVistaCarta(carta);
+                cardView.style.pointerEvents = 'none'; // No se pueden clickear
+                exampleModalCards.appendChild(cardView);
+            });
+        }
+        exampleModalOverlay.style.display = 'flex';
+    }
+
     function terminarRonda(ganador, resultado) {
         const quinta = resultado.cartas;
         let puntosRonda = 0;
@@ -342,15 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
             scoreOponente += puntosRonda;
             scoreJugador -= puntosNegativos;
             console.log("Quinta de Zaldor:", quinta);
-            // Mostrar la quinta de Zaldor
-            const quintaAreaTitle = quintaAreaElement.previousElementSibling;
-            quintaAreaTitle.textContent = "Quinta presentada por Zaldor";
-            quintaAreaTitle.classList.add("opponent-quinta-title");
-            quintaAreaElement.innerHTML = '';
-            quinta.forEach(carta => {
-                const cardView = crearVistaCarta(carta);
-                quintaAreaElement.appendChild(cardView);
-            });
+            mostrarQuintaGanadora("Quinta presentada por Zaldor", quinta);
         }
         
         actualizarMarcadores();
@@ -569,7 +575,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function actualizarVistas() {
         if(manoJugadorElement) manoJugadorElement.innerHTML = '';
-        if(quintaAreaElement) quintaAreaElement.innerHTML = '';
         if(pozoElement) pozoElement.innerHTML = '';
         const dorsoSrc = 'imagenes/dorso.png';
         if(mazoElement) mazoElement.innerHTML = `<img src="${dorsoSrc}" class="card">`;
@@ -590,7 +595,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function inicializarDragAndDrop() {
         const handElement = document.getElementById('player-hand');
-        const quintaArea = document.getElementById('quinta-area');
         const discardPile = document.getElementById('discard-pile');
         const onDragEnd = (evt) => {
             if (evt.to === discardPile) {
@@ -614,10 +618,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const newHandOrderIds = [];
             handElement.querySelectorAll('.card').forEach(cardNode => newHandOrderIds.push(cardNode.dataset.cardId));
-            quintaArea.querySelectorAll('.card').forEach(cardNode => newHandOrderIds.push(cardNode.dataset.cardId));
             manoJugador.sort((a, b) => newHandOrderIds.indexOf(a.id) - newHandOrderIds.indexOf(b.id));
         };
-        [handElement, quintaArea, discardPile].forEach(el => {
+        [handElement, discardPile].forEach(el => {
             if (el) new Sortable(el, { group: 'shared', animation: 150, onEnd: onDragEnd });
         });
     }
@@ -757,14 +760,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if(mazoElement) mazoElement.addEventListener('click', robarDelMazo);
     if(pozoClickElement) pozoClickElement.addEventListener('click', robarDelPozo);
     if(checkQuintaButton) checkQuintaButton.addEventListener('click', () => {
-        if (!turnoDelJugador) { return actualizarMensaje("No es tu turno."); }
-        const cartasPresentadas = [];
-        if(quintaAreaElement) quintaAreaElement.querySelectorAll('.card').forEach(cardNode => {
-            const cardId = cardNode.dataset.cardId;
-            const cartaReal = manoJugador.find(c => c.id === cardId);
-            if (cartaReal) cartasPresentadas.push(cartaReal);
-        });
-        const resultado = comprobarQuinta(cartasPresentadas);
+        if (!turnoDelJugador) { 
+            actualizarMensaje("No es tu turno.");
+            return; 
+        }
+        // Comprueba la mano completa del jugador en lugar de un área de presentación.
+        const resultado = comprobarQuinta(manoJugador);
         if (resultado) {
             terminarRonda('jugador', resultado);
         }
