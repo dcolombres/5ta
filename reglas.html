@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reglamento de La Quinta</title>
+    <link rel="icon" type="image/png" href="img/zaldor.png">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #063852;
+            background-image: url('img/formula2.png');
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.7;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: rgba(1, 26, 39, 0.85);
+            padding: 20px 40px;
+            border-radius: 15px;
+            border: 1px solid #c9a40a;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #c9a40a;
+            padding-bottom: 20px;
+        }
+        header img {
+            max-width: 100px;
+            border-radius: 50%;
+            border: 2px solid #c9a40a;
+        }
+        header h1 {
+            color: #00a9b7;
+            text-shadow: 0 0 8px rgba(0,0,0,0.6);
+        }
+        h2 {
+            color: #00a9b7;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        strong { color: #c9a40a; }
+        .hand {
+            justify-content: flex-start;
+            padding: 15px;
+            background-color: rgba(0,0,0,0.4);
+            min-height: auto;
+        }
+        .card {
+            height: 100px;
+        }
+        .example {
+            margin: 25px 0;
+            padding: 15px;
+            border: 1px dashed #00a9b7;
+            border-radius: 10px;
+        }
+        .example h3 { margin-top: 0; }
+        .pdf-link {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            font-size: 1.1em;
+        }
+        .pdf-link a {
+            color: #00a9b7;
+            font-weight: bold;
+        }
+        .checker-link {
+            background-color: rgba(0, 169, 183, 0.1);
+            border: 1px solid #00a9b7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .checker-link p {
+            padding: 0;
+        }
+        .checker-link a {
+            color: #fff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="img/zaldor.png" alt="Zaldor el Alquimista">
+            <h1>Reglamento de La Quinta</h1>
+            <p>Por Moro Colombres</p>
+        </header>
+
+        <section id="objetivo">
+            <h2>1. Objetivo del Juego</h2>
+            <p>El objetivo es ser el primer jugador en alcanzar o superar los <strong>100 puntos</strong>. El juego se desarrolla en rondas, y en cada una, los jugadores intentan formar una "Quinta".</p>
+        </section>
+
+        <section id="turno">
+            <h2>2. El Turno</h2>
+            <p>En tu turno, debes realizar una de dos acciones:</p>
+            <ul>
+                <li><strong>Robar del Mazo:</strong> Tomas la carta superior del mazo.</li>
+                <li><strong>Robar del Pozo:</strong> Tomas la carta superior del pozo de descartes. Esta acción tiene un coste: debes reemplazar la carta que tomas con una de tu mano que sea un <strong>Elixir Vital</strong> (10, 11 o 12).</li>
+            </ul>
+            <p>Después de robar, tu mano tendrá 8 cartas. Para finalizar tu turno, debes <strong>descartar una carta</strong> de tu mano al pozo, volviendo a tener 7 cartas.</p>
+        </section>
+
+        <section id="cantar-quinta">
+            <h2>3. Cantar Quinta: La Fórmula Secreta</h2>
+            <p>La jugada principal del juego es "cantar Quinta". Cuando crees que tienes una jugada válida en tu mano, debes pulsar el botón <strong>5TA</strong> para presentarla y ganar la ronda.</p>
+            <p>Una Quinta válida debe cumplir siempre con <strong>tres condiciones</strong>:</p>
+            <ol>
+                <li>Tener un mínimo de <strong>5 cartas</strong>.</li>
+                <li>Incluir al menos un <strong>Elixir Vital</strong> (10, 11 o 12) que no sea un comodín.</li>
+                <li>Contener una <strong>Escalera CoBOE</strong> de 4 o más cartas.</li>
+            </ol>
+
+            <h4>La Escalera CoBOE</h4>
+            <p>Es el corazón del juego. Una escalera es un conjunto de cartas con números consecutivos que siguen estrictamente el orden de palos cíclico: <strong>Copas -> Bastos -> Oros -> Espadas -> Copas...</strong></p>
+            <p>Las escaleras pueden ser <strong>crecientes</strong> (números ascendentes) o <strong>decrecientes</strong> (números descendentes), pero la secuencia de palos siempre avanza.</p>
+
+            <div class="checker-link">
+                <p><strong>¿Tenés dudas sobre una jugada?</strong><br>
+                Si querés saber si una combinación de cartas es una Quinta válida y cuántos puntos suma, podés usar nuestro <a href="mazo.html" target="_blank">Verificador de Quintas</a>.</p>
+            </div>
+        </section>
+
+        <section id="ejemplos">
+            <h2>4. Ejemplos de Quintas y Puntuación</h2>
+
+            <div class="example">
+                <h3>Quinta Simple (Creciente)</h3>
+                <p>Esta es la jugada más común. Se forma con una escalera y un Elixir Vital.</p>
+                <div class="hand">
+                    <img src="imagenes/04-copa.png" class="card" alt="4 de Copas">
+                    <img src="imagenes/05-basto.png" class="card" alt="5 de Bastos">
+                    <img src="imagenes/06-oro.png" class="card" alt="6 de Oros">
+                    <img src="imagenes/07-espada.png" class="card" alt="7 de Espadas">
+                    <img src="imagenes/10-basto.png" class="card" alt="10 de Bastos">
+                </div>
+                <p><strong>Puntuación:</strong> Bonus por 5 cartas (10 pts) + Valor de las cartas (4+5+6+7+5 = 27 pts) = <strong>37 Puntos</strong>.</p>
+            </div>
+
+            <div class="example">
+                <h3>Quinta Simple (Decreciente)</h3>
+                <p>Los números descienden, pero la secuencia de palos <strong>sigue avanzando</strong>.</p>
+                <div class="hand">
+                    <img src="imagenes/09-copa.png" class="card" alt="9 de Copas">
+                    <img src="imagenes/08-basto.png" class="card" alt="8 de Bastos">
+                    <img src="imagenes/07-oro.png" class="card" alt="7 de Oros">
+                    <img src="imagenes/06-espada.png" class="card" alt="6 de Espadas">
+                    <img src="imagenes/11-oro.png" class="card" alt="11 de Oros">
+                </div>
+                <p><strong>Puntuación:</strong> Bonus por 5 cartas (10 pts) + Valor de las cartas (9+8+7+6+5 = 35 pts) = <strong>45 Puntos</strong>.</p>
+            </div>
+
+            <div class="example">
+                <h3>Quinta Larga (6 cartas)</h3>
+                <p>Las Quintas de más de 5 cartas reciben bonificaciones mayores.</p>
+                <div class="hand">
+                    <img src="imagenes/01-espada.png" class="card" alt="1 de Espadas">
+                    <img src="imagenes/02-copa.png" class="card" alt="2 de Copas">
+                    <img src="imagenes/03-basto.png" class="card" alt="3 de Bastos">
+                    <img src="imagenes/04-oro.png" class="card" alt="4 de Oros">
+                    <img src="imagenes/05-espada.png" class="card" alt="5 de Espadas">
+                    <img src="imagenes/12-copa.png" class="card" alt="12 de Copas">
+                </div>
+                <p><strong>Puntuación:</strong> Bonus por 6 cartas (30 pts) + Valor de las cartas (1+2+3+4+5+10 = 25 pts) = <strong>55 Puntos</strong>.</p>
+            </div>
+
+            <div class="example">
+                <h3>Quinta Real</h3>
+                <p>Una jugada legendaria y difícil de conseguir. Se compone de 7 cartas específicas.</p>
+                <div class="hand">
+                    <img src="imagenes/06-copa.png" class="card" alt="6 de Copas">
+                    <img src="imagenes/07-basto.png" class="card" alt="7 de Bastos">
+                    <img src="imagenes/08-oro.png" class="card" alt="8 de Oros">
+                    <img src="imagenes/09-espada.png" class="card" alt="9 de Espadas">
+                    <img src="imagenes/10-copa.png" class="card" alt="10 de Copas">
+                    <img src="imagenes/11-basto.png" class="card" alt="11 de Bastos">
+                    <img src="imagenes/12-oro.png" class="card" alt="12 de Oros">
+                </div>
+                <p><strong>Puntuación:</strong> Esta jugada tiene un valor fijo de <strong>50 Puntos</strong>.</p>
+            </div>
+
+             <div class="example">
+                <h3>Quinta Imperial</h3>
+                <p>La jugada más poderosa y rara de todas. También se compone de 7 cartas específicas.</p>
+                <div class="hand">
+                    <img src="imagenes/07-copa.png" class="card" alt="7 de Copas">
+                    <img src="imagenes/06-basto.png" class="card" alt="6 de Bastos">
+                    <img src="imagenes/05-oro.png" class="card" alt="5 de Oros">
+                    <img src="imagenes/04-espada.png" class="card" alt="4 de Espadas">
+                    <img src="imagenes/03-copa.png" class="card" alt="3 de Copas">
+                    <img src="imagenes/02-basto.png" class="card" alt="2 de Bastos">
+                    <img src="imagenes/01-oro.png" class="card" alt="1 de Oros">
+                </div>
+                <p><strong>Puntuación:</strong> Esta jugada tiene un valor fijo de <strong>70 Puntos</strong>.</p>
+            </div>
+
+        </section>
+
+        <section id="final-ronda">
+            <h2>5. Final de la Ronda</h2>
+            <p>Cuando un jugador canta una Quinta válida, la ronda termina. Se realiza el siguiente cálculo:</p>
+            <ul>
+                <li>El <strong>ganador</strong> suma los puntos de su Quinta.</li>
+                <li>El <strong>perdedor</strong> resta de su puntaje total la suma de los valores de todas las cartas que le quedaron en la mano.</li>
+            </ul>
+        </section>
+
+        <div class="pdf-link">
+            <a href="img/reglas.pdf" target="_blank">Ver Reglamento Completo en PDF</a>
+        </div>
+
+    </div>
+    <footer id="micro-footer">
+        <p>LA QUINTA (2020) Derechos Reservados 5ta vs Zaldor Version 2.1.23 - Moro Colombres - <a href="http://www.moroarte.com" target="_blank">www.moroarte.com</a></p>
+    </footer>
+</body>
+</html>

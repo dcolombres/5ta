@@ -57,6 +57,11 @@ body {
 #start-game-button { font-size: 1.2em; padding: 15px 35px; border-radius: 10px; border: none; background-color: #00a9b7; color: #011a27; cursor: pointer; margin-top: 25px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
 #start-game-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.6); background-color: #00c4d4; }
 
+#splash-screen .instructions,
+#splash-screen .rules-link-splash {
+    display: none;
+}
+
 .zaldor-message { color: cyan; font-style: italic; }
 .system-message { color: #a7ff89; }
 .opponent-action-message { color: yellow; }
@@ -64,8 +69,8 @@ body {
 /* --- MOBILE FIRST LAYOUT --- */
 
 #game-container { display: none; width: 100%; min-height: 100vh; justify-content: center; align-items: flex-start; }
-#game-board { display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 60px 10px 200px 10px; box-sizing: border-box; background-color: #0e203a; background-image: url('img/formula2.png'); }
-.game-section { width: 100%; margin-bottom: 10px; }
+#game-board { display: flex; flex-direction: column; width: 100%; max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 50px 10px 230px 10px; box-sizing: border-box; background-color: #0e203a; background-image: url('img/formula2.png'); }
+.game-section { width: 100%; margin-bottom: 5px; }
 
 #player-area { order: 1; flex-grow: 1; display: flex; flex-direction: column; }
 #table-area { order: 2; }
@@ -142,17 +147,17 @@ h2 { margin: 10px 0; text-align: center; font-size: 1.1em; }
 
 #table-area .table-row { display: flex; justify-content: space-around; gap: 10px; }
 #deck-area, #discard-pile-area { width: 50%; text-align: center; }
-#deck, #discard-pile { width: 100%; min-height: 130px; }
+#deck, #discard-pile { width: 100%; min-height: 110px; }
 #discard-pile .card { pointer-events: none; }
 
 .table-controls { margin-top: 10px; width: 100%; text-align: center; }
 #check-quinta-button {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     background-color: #d92027;
     color: white;
-    font-size: 1.8em;
+    font-size: 1.6em;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     border: 2px solid #ff5722;
@@ -175,7 +180,29 @@ button:disabled { background-color: #888; cursor: not-allowed; }
 
 
 
-#message-area { width: 100%; height: 150px; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; padding: 10px; box-sizing: border-box; margin-top: 5px; overflow-y: auto; }
+#message-area { width: 100%; height: 180px; background-color: rgba(0, 0, 0, 0.4); border-radius: 5px; padding: 10px; box-sizing: border-box; margin-top: 5px; overflow-y: auto; }
+
+#micro-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #011a27;
+    color: #aaa;
+    font-size: 0.7em;
+    text-align: center;
+    padding: 4px 0;
+    z-index: 200;
+    border-top: 1px solid #444;
+}
+#micro-footer p {
+    margin: 0;
+    padding: 0;
+}
+#micro-footer a {
+    color: #c9a40a;
+    text-decoration: none;
+}
 
 .score-container { display: flex; justify-content: space-around; width: 100%; }
 .score-area { width: 45%; text-align: center; font-size: 1em; font-weight: bold; color: #c9a40a; }

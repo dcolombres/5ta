@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let turnoDelJugador = true, haRobado = false, esperandoPagoPozo = false, modoRobar = false,
     turnoAdicional = false;
     let mazoCompleto = [];
-    let isSequenceSortAscending = true;
+    let isSequenceSortAscending = true, juegoTerminado = false;
 
     // Referencias al DOM (Juego)
     const gameContainerElement = document.getElementById('game-container');
@@ -80,11 +80,18 @@ document.addEventListener('DOMContentLoaded', () => {
         "Una cereza frente al espejo dice: “¿Seré esa yo?”"
     ];
 
-    function mostrarMensajeZaldor() {
-        const mensaje = mensajesZaldor[Math.floor(Math.random() * mensajesZaldor.length)];
+    function mostrarMensajeZaldor(customMessage = null) {
+        const mensaje = customMessage || mensajesZaldor[Math.floor(Math.random() * mensajesZaldor.length)];
         const mensajeElement = document.createElement('p');
         mensajeElement.className = 'zaldor-message';
-        mensajeElement.textContent = `ZALDOR DICE: "${mensaje}"`;
+        
+        // Si no es un mensaje personalizado, añade el prefijo "ZALDOR DICE:". Si lo es, lo muestra tal cual.
+        if (!customMessage) {
+            mensajeElement.textContent = `ZALDOR DICE: "${mensaje}"`;
+        } else {
+            mensajeElement.innerHTML = mensaje; // Usar innerHTML para que interprete etiquetas como <b>
+        }
+        
         messageElement.prepend(mensajeElement);
     }
 
@@ -333,17 +340,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (resultado.tipo === 'Real') {
             puntosRonda = 50;
-            mensajeDetallado = '¡Quinta Real! Sumas &lt;b&gt;50 puntos&lt;/b&gt;.';
+            mensajeDetallado = '¡Quinta Real! Sumas <b>50 puntos</b>.';
         } else if (resultado.tipo === 'Imperial') {
             puntosRonda = 70;
-            mensajeDetallado = '¡Quinta Imperial! Sumas &lt;b&gt;70 puntos&lt;/b&gt;.';
+            mensajeDetallado = '¡Quinta Imperial! Sumas <b>70 puntos</b>.';
         } else {
             puntosBase = quinta.reduce((sum, card) => sum + card.puntos, 0);
             if (quinta.length === 5) bonusLongitud = 10;
             else if (quinta.length === 6) bonusLongitud = 30;
             else if (quinta.length >= 7) bonusLongitud = 40;
             puntosRonda = puntosBase + bonusLongitud;
-            mensajeDetallado = `Quinta de ${quinta.length} cartas: &lt;b&gt;${bonusLongitud} pts&lt;/b&gt; (bonus) + &lt;b&gt;${puntosBase} pts&lt;/b&gt; (cartas) = &lt;b&gt;${puntosRonda} pts&lt;/b&gt;.`;
+            mensajeDetallado = `Quinta de ${quinta.length} cartas: <b>${bonusLongitud} pts</b> (bonus) + <b>${puntosBase} pts</b> (cartas) = <b>${puntosRonda} pts</b>.`;
         }
 
         const manoPerdedor = (ganador === 'jugador') ? manoOponente : manoJugador;
@@ -352,7 +359,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ganador === 'jugador') {
             scoreJugador += puntosRonda;
             scoreOponente -= puntosNegativos;
-        } else {
+        }
+        else {
             scoreOponente += puntosRonda;
             scoreJugador -= puntosNegativos;
             console.log("Quinta de Zaldor:", quinta);
@@ -377,32 +385,53 @@ document.addEventListener('DOMContentLoaded', () => {
         if (scoreJugador >= 100 || scoreOponente >= 100) {
             setTimeout(() => terminarJuego(), 2000);
         } else {
-            checkQuintaButton.style.display = 'none';
-            continueGameButton.style.display = 'block';
+            if(checkQuintaButton) checkQuintaButton.style.display = 'none';
+            if(continueGameButton) continueGameButton.style.display = 'block';
         }
     }
 
     // ... (resto del código)
 
     if(continueGameButton) continueGameButton.addEventListener('click', () => {
-        continueGameButton.style.display = 'none';
-        checkQuintaButton.style.display = 'block';
-        repartir();
+        if (juegoTerminado) {
+            // Reiniciar la partida completa
+            juegoTerminado = false;
+            scoreJugador = 0;
+            scoreOponente = 0;
+            repartir(true); // true para que limpie mensajes y sea como la primera vez
+            continueGameButton.style.display = 'none';
+            checkQuintaButton.style.display = 'block';
+        } else {
+            // Iniciar solo una nueva ronda
+            continueGameButton.style.display = 'none';
+            checkQuintaButton.style.display = 'block';
+            repartir();
+        }
     });
 
 
     function terminarJuego() {
-        let mensajeFinal = "¡Fin del juego! ";
+        juegoTerminado = true;
+        let mensajeFinal = "";
         const winnerName = playerNameDisplay.textContent;
+
         if (scoreJugador >= 100 && scoreJugador > scoreOponente) {
-            mensajeFinal += `¡Has ganado, ${winnerName}!`;
+            mensajeFinal = `ZALDOR DICE: "Esta vez me ganaste, <b>${winnerName}</b>... ¿Te juego la revancha?"`;
         } else if (scoreOponente >= 100) {
-            mensajeFinal += "Zaldor ha ganado.";
+            mensajeFinal = `ZALDOR DICE: "Te gané, <b>${winnerName}</b>... ¿te animás a jugar otra vez?"`;
         } else {
-            mensajeFinal += "Es un empate.";
+            mensajeFinal = `ZALDOR DICE: "¡Un empate! Esto no se queda así. ¿Otra partida?"`;
+        }
+        
+        mostrarMensajeZaldor(mensajeFinal);
+
+        if (continueGameButton) {
+            continueGameButton.textContent = "Jugar de Nuevo";
+            continueGameButton.style.display = 'block';
         }
         actualizarMensaje(mensajeFinal);
         if(checkQuintaButton) checkQuintaButton.disabled = true;
+        if(microFooter) microFooter.style.display = 'block'; // Mostrar footer
     }
 
     // =================================================================================
@@ -495,7 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Check suit order
-            const expected_p2 = esAscendente ? (p1 + diffValor) % 4 : (p1 - diffValor % 4 + 4) % 4;
+            const expected_p2 = (p1 + diffValor) % 4;
             if (expected_p2 !== p2) {
                 if (DEBUG) {
                     console.log(`Validación fallida: orden de palo incorrecto para ${esAscendente ? 'asc' : 'desc'}`);
@@ -748,6 +777,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 8. INICIALIZACIÓN DE EVENTOS ---
     // =================================================================================
 
+    const microFooter = document.getElementById('micro-footer');
+
     if(startGameButton) startGameButton.addEventListener('click', () => {
         const playerName = playerNameInput.value.trim();
         if (playerName && playerNameDisplay) {
@@ -755,6 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if(splashScreen) splashScreen.style.display = 'none';
         if(gameContainerElement) gameContainerElement.style.display = 'flex';
+        if(microFooter) microFooter.style.display = 'none'; // Ocultar footer
         repartir(true);
     });
 
